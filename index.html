@@ -1,354 +1,861 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sebastian B. | Portfolio</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        html { scroll-behavior: smooth !important; scroll-padding-top: 100px; }
-        body { background-color: #000000; color: #ffffff; font-family: 'Inter', sans-serif; overflow-x: hidden; margin: 0; }
-
-        .header-carousel { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; overflow: hidden; opacity: 0.15; mask-image: linear-gradient(to bottom, black 50%, transparent 100%); }
-        .carousel-track { display: flex; width: max-content; animation: scroll 60s linear infinite; }
-        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        
-        /* RESOLUCIÓN PREDETERMINADA PARA CAROUSEL */
-        .carousel-item { width: 300px; height: 450px; margin: 10px; background: #111; border-radius: 20px; background-size: cover; background-position: center; flex-shrink: 0; }
-
-        .portfolio-container { width: 100%; overflow: hidden; padding: 20px 0; }
-        .portfolio-track { display: flex; gap: 24px; animation: scroll 40s linear infinite; width: max-content; }
-        .portfolio-track:hover { animation-play-state: paused; }
-
-        /* RESOLUCIÓN PREDETERMINADA PARA CARTAS DE PORTAFOLIO */
-        .portfolio-card { 
-            width: 300px; 
-            height: 450px; 
-            background-color: #0f0f12; 
-            border: 1px solid #1f1f23; 
-            border-radius: 20px; 
-            overflow: hidden; 
-            flex-shrink: 0; 
-            position: relative; 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            background-size: cover; 
-            background-position: center;
-            cursor: pointer;
-        }
-
-        .portfolio-card:hover { border-color: #3b82f6; transform: scale(1.02); box-shadow: 0 0 30px rgba(59, 130, 246, 0.2); }
-
-        .btn-blue { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); transition: all 0.3s ease; }
-        .btn-blue:hover { transform: translateY(-2px); box-shadow: 0 0 35px rgba(59, 130, 246, 0.5); }
-        
-        .dark-card { background-color: #0f0f12; border: 1px solid #1f1f23; border-radius: 24px; transition: all 0.3s ease; }
-        .dark-card:hover { border-color: #333; }
-
-        nav { position: fixed; top: 0; width: 100%; z-index: 100; }
-
-        /* ESTILO DEL ZOOM (LIGHTBOX) CON RESOLUCIÓN CONTROLADA */
-
-/* ESTILO DEFINITIVO PARA RENDER 16:9 */
-#lightbox-img {
-    image-rendering: -webkit-optimize-contrast; /* Para Chrome/Safari */
-    image-rendering: crisp-edges;               /* Para Firefox */
-    width: 95vw;          /* Que use casi todo el ancho de la pantalla */
-    max-width: 1200px;    /* Para que no se pixele en monitores gigantes */
-    height: auto;         /* ¡IMPORTANTE! Que la altura se ajuste sola */
-    aspect-ratio: 16 / 9; /* Fuerza el formato de tus renders */
-    object-fit: contain;  /* Asegura que se vea la imagen completa */
-    border-radius: 12px;
-    display: block;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sebastian B. — Roblox Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --bg:#000;--border:rgba(255,255,255,0.07);
+  --text:#fff;--muted:rgba(255,255,255,0.38);--muted2:rgba(255,255,255,0.55);
 }
-    </style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;overflow-x:hidden}
+@media(pointer:fine){body{cursor:none}}
+a{text-decoration:none;color:inherit}
+
+/* CURSOR */
+#cur,#cur-ring{position:fixed;pointer-events:none;border-radius:50%;transform:translate(-50%,-50%)}
+#cur{width:8px;height:8px;background:#fff;z-index:9999;transition:width .15s,height .15s}
+#cur-ring{width:32px;height:32px;border:1px solid rgba(255,255,255,.4);z-index:9998;transition:width .2s,height .2s,border-color .2s}
+#cur.big{width:4px;height:4px}
+#cur-ring.big{width:48px;height:48px;border-color:rgba(255,255,255,.7)}
+@media(pointer:coarse){#cur,#cur-ring{display:none}}
+
+/* CURSOR GLOW */
+#cursor-glow{
+  position:fixed;pointer-events:none;z-index:0;
+  width:800px;height:800px;border-radius:50%;
+  left:50%;top:50%;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(255,255,255,.05) 0%,rgba(255,255,255,.015) 30%,transparent 68%);
+  will-change:left,top;
+}
+
+/* NOISE */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9990;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* NAV */
+nav{
+  position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  width:calc(100% - 48px);max-width:1100px;padding:0 20px;height:52px;
+  background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);
+  border-radius:100px;
+}
+.nav-logo{font-size:.95rem;font-weight:800;letter-spacing:-.01em}
+.nav-logo span{opacity:.35}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font-size:.72rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);transition:color .2s}
+.nav-links a:hover{color:#fff}
+.nav-cta{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:9px 18px;border-radius:100px;background:#fff;color:#000;border:none;cursor:pointer;transition:opacity .2s,transform .2s}
+.nav-cta:hover{opacity:.88;transform:scale(.97)}
+.burger{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:4px}
+.burger span{width:20px;height:1.5px;background:#fff;border-radius:2px}
+.mob-menu{display:none;flex-direction:column;position:fixed;top:80px;left:24px;right:24px;padding:12px 20px;background:rgba(10,10,10,.96);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(24px);border-radius:16px;z-index:999}
+.mob-menu.open{display:flex}
+.mob-menu a{font-size:.8rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05);transition:color .2s}
+.mob-menu a:last-child{border-bottom:none}
+.mob-menu a:hover{color:#fff}
+
+/* HERO */
+#home{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;padding:100px 5vw 0;position:relative;overflow:hidden;align-items:center;gap:40px}
+.hero-left{display:flex;flex-direction:column;padding-bottom:6vh;animation:fadeUp .9s .1s both}
+.hero-avail{display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted2);margin-bottom:28px}
+.avail-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;flex-shrink:0;animation:blink 2.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-name{font-size:clamp(3.2rem,7vw,7rem);font-weight:800;line-height:.9;letter-spacing:-.04em;margin-bottom:20px}
+.hero-name .dim{opacity:.2}
+.hero-role{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:28px;display:flex;align-items:center;gap:10px}
+.hero-role::before{content:'';width:20px;height:1px;background:var(--muted)}
+.hero-desc{font-size:1rem;line-height:1.7;color:rgba(255,255,255,.5);font-weight:400;max-width:420px;margin-bottom:40px}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn-w{padding:13px 24px;border-radius:100px;background:#fff;color:#000;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:opacity .2s,transform .15s}
+.btn-w:hover{opacity:.88;transform:translateY(-1px)}
+.btn-outline{padding:13px 24px;border-radius:100px;background:transparent;color:#fff;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:1px solid rgba(255,255,255,.2);cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:border-color .2s,background .2s,transform .15s}
+.btn-outline:hover{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.05);transform:translateY(-1px)}
+.hero-right{display:flex;flex-direction:column;gap:12px;padding-bottom:6vh;animation:fadeUp .9s .25s both}
+.hero-main-card{position:relative;overflow:hidden;border-radius:20px;border:1px solid rgba(255,255,255,.08);height:340px;background:#0d0d0d}
+#hero-img{width:100%;height:100%;background-size:cover;background-position:center;transition:opacity .4s}
+.hero-card-glass-bar{position:absolute;bottom:12px;left:12px;right:12px;padding:12px 16px;background:rgba(0,0,0,.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.1);border-radius:12px;display:flex;justify-content:space-between;align-items:center}
+.hcgb-left{display:flex;flex-direction:column;gap:2px}
+.hcgb-tag{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.hcgb-title{font-size:.85rem;font-weight:700}
+.hcgb-right{display:flex;gap:6px}
+.hcgb-pill{font-family:'DM Mono',monospace;font-size:.6rem;padding:4px 10px;border-radius:100px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);cursor:pointer;transition:background .2s}
+.hcgb-pill:hover{background:rgba(255,255,255,.14)}
+.hero-thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.hero-thumb{height:80px;border-radius:10px;background:#111;background-size:cover;background-position:center;border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:border-color .2s,transform .2s;overflow:hidden}
+.hero-thumb:hover{border-color:rgba(255,255,255,.2);transform:scale(1.03)}
+.hero-thumb.active{border-color:rgba(255,255,255,.5)}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stat{padding:24px 2vw;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:5px;transition:background .25s}
+.stat:last-child{border-right:none}
+.stat:hover{background:rgba(255,255,255,.02)}
+.stat-lbl{font-family:'DM Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);display:flex;align-items:center;gap:6px}
+.live-dot{width:5px;height:5px;border-radius:50%;background:#4ade80;animation:blink 2s infinite}
+.stat-val{font-size:clamp(1.3rem,2.2vw,2rem);font-weight:800;letter-spacing:-.03em}
+
+/* WORK */
+#work{padding:100px 0 60px}
+.sec-head{padding:0 5vw 48px;display:flex;justify-content:space-between;align-items:flex-end}
+.sec-eyebrow{font-family:'DM Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:10px}
+.sec-title{font-size:clamp(2rem,5vw,4rem);font-weight:800;letter-spacing:-.03em;line-height:1}
+.sec-note{font-size:.85rem;color:var(--muted);font-weight:400;line-height:1.6;max-width:260px}
+.track-wrap{overflow:hidden;position:relative;padding:4px 0 20px}
+.track-wrap::before,.track-wrap::after{content:'';position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none}
+.track-wrap::before{left:0;background:linear-gradient(to right,#000,transparent)}
+.track-wrap::after{right:0;background:linear-gradient(to left,#000,transparent)}
+.track{display:flex;gap:16px;animation:slide 40s linear infinite;width:max-content;padding:0 60px}
+.track:hover{animation-play-state:paused}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.pcard{width:320px;height:210px;flex-shrink:0;border-radius:14px;background:#0d0d0d;background-size:cover;background-position:center;border:1px solid rgba(255,255,255,.07);position:relative;overflow:hidden;cursor:pointer;transition:border-color .3s,transform .35s cubic-bezier(.23,1,.32,1)}
+.pcard::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,transparent 55%);opacity:0;transition:opacity .3s}
+.pcard:hover{border-color:rgba(255,255,255,.22);transform:translateY(-5px) scale(1.01)}
+.pcard:hover::after{opacity:1}
+.pcard-info{position:absolute;bottom:0;left:0;right:0;z-index:1;padding:14px 16px;transform:translateY(6px);opacity:0;transition:all .3s}
+.pcard:hover .pcard-info{transform:translateY(0);opacity:1}
+.pcard-tag{font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.5)}
+.pcard-name{font-size:.85rem;font-weight:700;margin-top:2px}
+
+/* LIGHTBOX */
+#lb{position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,.94);display:none;align-items:center;justify-content:center;padding:40px;cursor:zoom-out;backdrop-filter:blur(6px)}
+#lb.on{display:flex}
+#lb-img{max-width:1200px;width:95vw;height:auto;aspect-ratio:16/9;object-fit:contain;border-radius:12px;border:1px solid rgba(255,255,255,.08)}
+.lb-x{position:absolute;top:20px;right:24px;font-size:1.5rem;color:rgba(255,255,255,.4);cursor:pointer;transition:color .2s}
+.lb-x:hover{color:#fff}
+
+/* GAMES */
+#games{padding:80px 5vw;border-top:1px solid var(--border)}
+.games-bento{
+  display:grid;
+  grid-template-columns:1fr 1fr 1.85fr;
+  grid-template-rows:1fr 1fr;
+  gap:12px;
+}
+.game-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden;transition:border-color .3s,transform .3s,background .3s;cursor:pointer;position:relative}
+.game-card:hover{border-color:rgba(255,255,255,.2);transform:translateY(-4px);background:rgba(255,255,255,.055)}
+.game-card.trending{grid-column:3;grid-row:1/3;border-color:rgba(255,255,255,.12)}
+.game-card.trending:hover{border-color:rgba(255,255,255,.28)}
+.game-thumb{width:100%;background:#111;background-size:cover;background-position:center;position:relative}
+.game-card.small .game-thumb{aspect-ratio:1/1}
+.game-card.trending .game-thumb{height:68%;min-height:200px}
+.trending-badge{position:absolute;top:10px;right:10px;display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);border-radius:100px;padding:4px 10px 4px 7px;font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(255,255,255,.85)}
+.trending-dot{width:5px;height:5px;border-radius:50%;background:#4ade80;animation:blink 2s infinite}
+.game-live-badge{position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);border-radius:100px;padding:3px 9px 3px 6px;font-family:'DM Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.8)}
+.game-info{padding:12px 14px 14px}
+.game-name{font-size:.82rem;font-weight:700;margin-bottom:8px;line-height:1.3}
+.game-card.trending .game-name{font-size:1rem;margin-bottom:10px}
+.game-stats{display:flex;gap:6px;flex-wrap:wrap}
+.game-stat{font-family:'DM Mono',monospace;font-size:.56rem;color:rgba(255,255,255,.38);display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:100px;padding:3px 8px;white-space:nowrap}
+.game-stat i{font-size:.5rem;opacity:.6}
+
+/* TESTIMONIALS */
+#testimonials{padding:80px 5vw;border-top:1px solid var(--border)}
+.testi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rating-card{grid-column:1/3;display:flex;align-items:center;justify-content:space-between;padding:28px 32px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;flex-wrap:wrap;gap:20px}
+.rating-big{display:flex;flex-direction:column;gap:4px}
+.rating-stars{font-size:1.3rem;letter-spacing:.05em;margin-bottom:4px}
+.rating-num{font-size:2.5rem;font-weight:800;letter-spacing:-.04em;line-height:1}
+.rating-sub{font-family:'DM Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);margin-top:4px}
+.rating-pills{display:flex;flex-wrap:wrap;gap:10px}
+.rating-pill{display:flex;align-items:center;gap:8px;padding:12px 18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;font-size:.82rem;font-weight:600}
+.rating-pill i{color:rgba(255,255,255,.4);font-size:.75rem}
+.testi-card{padding:24px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;transition:border-color .25s,background .25s}
+.testi-card:hover{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.05)}
+.testi-stars{font-size:.9rem;margin-bottom:12px}
+.testi-text{font-size:.88rem;line-height:1.7;color:rgba(255,255,255,.6);font-weight:400;margin-bottom:16px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-avatar{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;border:1px solid rgba(255,255,255,.1)}
+.testi-name{font-size:.78rem;font-weight:700}
+.testi-role{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);margin-top:1px}
+
+/* ABOUT */
+#about{padding:100px 5vw;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;border-top:1px solid var(--border)}
+.about-tag{font-family:'DM Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:16px}
+.about-title{font-size:clamp(2.2rem,4.5vw,4rem);font-weight:800;letter-spacing:-.03em;line-height:.95;margin-bottom:28px}
+.about-title em{font-style:italic;opacity:.3}
+.about-body{font-size:.95rem;line-height:1.75;color:rgba(255,255,255,.45);font-weight:400;margin-bottom:40px;max-width:440px}
+.caps{display:flex;flex-direction:column;border-top:1px solid var(--border)}
+.cap-item{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);font-size:.85rem;color:rgba(255,255,255,.5);font-weight:500;transition:color .2s}
+.cap-item:hover{color:#fff}
+.cap-arrow{font-size:.7rem;opacity:.3}
+.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pay-head{font-family:'DM Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:16px}
+.pay-card{padding:24px 22px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:border-color .25s,background .25s,transform .25s;position:relative;overflow:hidden}
+.pay-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(255,255,255,.12),transparent)}
+.pay-card:hover{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.05);transform:translateY(-3px)}
+.pay-icon{font-size:1.4rem;margin-bottom:14px;opacity:.7}
+.pay-name{font-size:1.1rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+.pay-sub{font-family:'DM Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+
+/* CONTACT */
+#contact{padding:100px 5vw;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+.contact-title{font-size:clamp(2.5rem,5vw,4.5rem);font-weight:800;letter-spacing:-.04em;line-height:.92;margin-bottom:20px}
+.contact-title em{font-style:italic;opacity:.3}
+.contact-sub{font-size:.9rem;color:var(--muted);line-height:1.7;margin-bottom:40px;max-width:340px}
+.socials{display:flex;flex-direction:column;border-top:1px solid var(--border)}
+.soc-link{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:1px solid var(--border);color:var(--muted);font-size:.82rem;font-weight:500;transition:color .2s}
+.soc-link:hover{color:#fff}
+.soc-name{display:flex;align-items:center;gap:12px}
+.soc-handle{font-family:'DM Mono',monospace;font-size:.65rem;opacity:.5}
+.cform{display:flex;flex-direction:column;gap:10px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.finput{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 18px;color:#fff;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:500;outline:none;width:100%;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none}
+.finput::placeholder{color:rgba(255,255,255,.25)}
+.finput:focus{border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.06)}
+textarea.finput{resize:none;min-height:120px}
+select.finput{cursor:pointer}
+option{background:#111}
+.fsub{background:#fff;color:#000;border:none;border-radius:12px;padding:16px;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:opacity .2s,transform .15s;display:flex;align-items:center;justify-content:center;gap:10px}
+.fsub:hover{opacity:.88;transform:translateY(-1px)}
+.fsub:disabled{opacity:.4;cursor:not-allowed;transform:none}
+#fstatus{font-family:'DM Mono',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;text-align:center;padding:6px 0;display:none}
+
+/* MUSIC BAR */
+#music-wrap{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  z-index:9800;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  width:min(560px,calc(100vw - 32px));
+}
+#music-pill{
+  display:flex;align-items:center;gap:8px;padding:8px 18px;
+  background:rgba(8,8,8,.7);border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(28px) saturate(200%);-webkit-backdrop-filter:blur(28px) saturate(200%);
+  border-radius:100px;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.6);
+  transition:border-color .2s,color .2s;box-shadow:0 4px 24px rgba(0,0,0,.5);
+  user-select:none;
+}
+#music-pill:hover{border-color:rgba(255,255,255,.22);color:#fff}
+.pill-note{display:inline-block;animation:noteBounce .8s ease-in-out infinite alternate}
+@keyframes noteBounce{from{transform:translateY(0)}to{transform:translateY(-2px)}}
+.pill-chevron{font-size:.5rem;transition:transform .3s;opacity:.5}
+#music-wrap.open .pill-chevron{transform:rotate(180deg)}
+
+#music-panel{
+  width:100%;
+  background:transparent;
+  border:none;
+  backdrop-filter:none;
+  box-shadow:none;
+
+  max-height:0;
+  overflow:hidden;
+  opacity:0;
+
+  transition:max-height .35s cubic-bezier(.23,1,.32,1),opacity .3s;
+  pointer-events:none;
+}
+
+#music-wrap.open #music-panel{
+  max-height:180px;
+  opacity:1;
+  pointer-events:all;
+}
+
+#music-wrap{
+  width:min(420px, calc(100vw - 32px));
+}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:24px 5vw;display:flex;justify-content:space-between;align-items:center;margin-bottom:80px}
+.foot-copy{font-family:'DM Mono',monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.foot-links{display:flex;gap:8px}
+.foot-btn{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:9px 16px;font-family:'DM Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);transition:all .2s}
+.foot-btn:hover{border-color:rgba(255,255,255,.2);color:#fff}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{width:calc(100% - 32px);padding:0 16px}
+  .nav-links,.nav-cta{display:none}
+  .burger{display:flex}
+  #home{grid-template-columns:1fr;padding:100px 5vw 0;min-height:auto;gap:32px}
+  .hero-right{padding-bottom:0}
+  .hero-main-card{height:260px}
+  .stats-row{grid-template-columns:repeat(3,1fr)}
+  .stat:nth-child(3){border-right:none}
+  .games-bento{grid-template-columns:1fr 1fr;grid-template-rows:auto}
+  .game-card.trending{grid-column:1/3;grid-row:auto}
+  .game-card.trending .game-thumb{height:55%;min-height:160px}
+  .testi-grid{grid-template-columns:1fr}
+  .rating-card{grid-column:1}
+  #about{grid-template-columns:1fr;padding:80px 5vw;gap:48px}
+  #contact{grid-template-columns:1fr;padding:80px 5vw;gap:48px}
+  .form-row{grid-template-columns:1fr}
+  footer{flex-direction:column;gap:16px;text-align:center}
+  .pcard{width:260px;height:170px}
+}
+@media(max-width:500px){
+  .hero-name{font-size:clamp(2.8rem,14vw,4rem)}
+  .hero-thumb{height:60px}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(2){border-right:none}
+}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:2px}
+</style>
 </head>
 <body>
 
-    <header id="home" class="relative min-h-screen flex flex-col items-center">
-        <div class="header-carousel">
-            <div class="carousel-track">
-                <div class="carousel-item" style="background-image: url('https://i.ibb.co/6cmBXQtC/image-acf7a1.png')"></div>
-                <div class="carousel-item" style="background-image: url('https://i.ibb.co/Kp9nH4qz/image-acf79a.png')"></div>
-                <div class="carousel-item" style="background-image: url('https://i.ibb.co/Rksqvpgs/image-acf77d.png')"></div>
-                <div class="carousel-item" style="background-image: url('https://i.ibb.co/6cmBXQtC/image-acf7a1.png')"></div>
-                <div class="carousel-item" style="background-image: url('https://i.ibb.co/Kp9nH4qz/image-acf79a.png')"></div>
-                <div class="carousel-item" style="background-image: url('https://i.ibb.co/Rksqvpgs/image-acf77d.png')"></div>
-            </div>
-        </div>
+<div id="cursor-glow"></div>
+<div id="cur"></div>
+<div id="cur-ring"></div>
 
-        <nav class="w-full flex justify-center p-8 z-50 bg-black/40 backdrop-blur-xl border-b border-white/5">
-            <div class="w-full max-w-7xl flex justify-between items-center">
-                <div class="flex items-center gap-2 font-black text-2xl tracking-tighter uppercase">
-                    <i class="fa-solid fa-cube text-blue-500"></i>
-                    <span>SEBASTIAN B.</span>
-                </div>
-                <div class="hidden md:flex gap-10 text-xs font-bold uppercase tracking-widest text-zinc-400">
-                    <a href="#home" class="nav-link hover:text-white transition">Home</a>
-                    <a href="#work" class="nav-link hover:text-white transition">Portfolio</a>
-                    <a href="#about" class="nav-link hover:text-white transition">About</a>
-                    <a href="#contact" class="nav-link hover:text-white transition">Contact</a>
-                </div>
-            </div>
-        </nav>
-
-        <div class="flex-grow flex flex-col items-center justify-center text-center px-4 z-10 pt-20">
-            <div class="inline-block px-4 py-1.5 mb-6 border border-zinc-800 rounded-full bg-zinc-900/50 backdrop-blur-md">
-                <span class="text-zinc-400 text-[10px] font-bold tracking-widest uppercase italic">Building Realities Since 2020</span>
-            </div>
-            <h1 class="text-6xl md:text-8xl font-black mb-8 tracking-tighter">
-                CREATING THE <span class="text-blue-500 italic">FUTURE</span> OF ROBLOX.
-            </h1>
-            <div class="flex flex-wrap justify-center gap-4 mb-20">
-                <a href="#work" class="btn-blue px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest">View Portfolio</a>
-                <a href="#contact" class="bg-white text-black px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-zinc-200 transition">Let's Talk</a>
-            </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 w-full max-w-6xl">
-                <div class="dark-card px-6 py-5 flex flex-col items-center justify-center">
-                    <span class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest block mb-2">Experience</span>
-                    <p class="text-5xl font-black italic">5 Y+</p>
-                </div>
-                <div class="dark-card p-8 border-blue-500/20 flex flex-col items-center justify-center">
-                    <span class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest block mb-2">Capabilities</span>
-                    <p class="text-lg font-black italic leading-tight text-center text-xs">
-                           3D ASSETS (BLENDER)<br>
-                               GAME DEV (ROBLOX)<br>
-                               UI/UX (FIGMA)
-                             </p>
-                </div>
-                <div class="dark-card p-8 flex flex-col items-center justify-center">
-                    <span class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest block mb-2">Projects Delivered</span>
-                    <p class="text-5xl font-black italic">50+</p>
-                </div>
-                <div class="dark-card p-8 flex flex-col items-center justify-center">
-                  <span class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest block mb-2">Player Reach</span>
-                    <p class="text-5xl font-black italic">2.6M+</p>
-                </div>
-                <div class="dark-card p-8 flex flex-col items-center justify-center border-blue-500/30">
-                  <span class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest block mb-2 flex items-center gap-2">
-                    <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span> Live CCU
-                  </span>
-                  <p id="ccu-count" class="text-5xl font-black italic">...</p>
-                </div>
-            </div>
-        </div>
-    </header>
-
-<section id="work" class="py-32 overflow-hidden bg-black">
-        <div class="max-w-7xl mx-auto px-8 mb-16">
-            <h2 class="text-5xl font-black uppercase italic tracking-tighter text-blue-500">Featured Projects</h2>
-            <p class="text-zinc-500 mt-2">different style maps, optimized 3D assets.</p>
-        </div>
-<div class="portfolio-container">
-<div class="portfolio-track">
-    <div class="portfolio-card" style="background-image: url('https://i.ibb.co/YnFxbSr/image.png')" onclick="openLightbox(this)"></div>
-    <div class="portfolio-card" style="background-image: url('https://i.ibb.co/ynrH7j9N/image.png')" onclick="openLightbox(this)"></div>
-    <div class="portfolio-card" style="background-image: url('https://i.ibb.co/5g9xLZ7d/image.png')" onclick="openLightbox(this)"></div>
-    <div class="portfolio-card" style="background-image: url('https://i.ibb.co/Z6gTDBC7/image.png')" onclick="openLightbox(this)"></div>
-    <div class="portfolio-card" style="background-image: url('https://i.ibb.co/LX7Mk7Fs/image.png')" onclick="openLightbox(this)"></div>
-    <div class="portfolio-card" style="background-image: url('https://i.ibb.co/gM7yV0d4/image.png')" onclick="openLightbox(this)"></div> 
-    <div class="portfolio-card" style="background-image: url('https://i.ibb.co/wrcKrJYS/image.png')" onclick="openLightbox(this)"></div>
-    <div class="portfolio-card" style="background-image: url('https://i.ibb.co/3ygZh4t3/image.png')" onclick="openLightbox(this)"></div>
-    <div class="portfolio-card" style="background-image: url('https://i.ibb.co/YnFxbSr/image.png')" onclick="openLightbox(this)"></div>
-    <div class="portfolio-card" style="background-image: url('https://i.ibb.co/ynrH7j9N/image.png')" onclick="openLightbox(this)"></div>
-    <div class="portfolio-card" style="background-image: url('https://i.ibb.co/5g9xLZ7d/image.png')" onclick="openLightbox(this)"></div>
-</div>
-    
+<!-- NAV -->
+<nav>
+  <a href="#home" class="nav-logo">SB<span>.</span></a>
+  <div class="nav-links">
+    <a href="#home">Home</a>
+    <a href="#work">Work</a>
+    <a href="#games">Games</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <a href="#contact" class="nav-cta">Hire Me</a>
+  <div class="burger" id="burger" onclick="toggleMob()"><span></span><span></span><span></span></div>
+</nav>
+<div class="mob-menu" id="mobMenu">
+  <a href="#home" onclick="toggleMob()">Home</a>
+  <a href="#work" onclick="toggleMob()">Work</a>
+  <a href="#games" onclick="toggleMob()">Games</a>
+  <a href="#about" onclick="toggleMob()">About</a>
+  <a href="#contact" onclick="toggleMob()">Contact</a>
 </div>
 
-<div id="lightbox" class="fixed inset-0 bg-black/95 hidden z-[999] flex items-center justify-center p-4 cursor-zoom-out transition-all duration-300" onclick="closeLightbox()">
-    <img id="lightbox-img" src="" class="shadow-2xl border border-zinc-800">
-    <div class="absolute top-10 right-10 text-white text-4xl font-light cursor-pointer">&times;</div>
-</div>
-    </section>
-
-    <section id="about" class="max-w-7xl mx-auto py-32 px-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-            <div>
-                <h2 class="text-6xl font-black mb-8 leading-tight uppercase">EVERYTHING<br>YOUR GAME <span class="text-blue-500 italic">NEEDS.</span></h2>
-                <p class="text-zinc-400 text-lg mb-10 italic">I specialize in turning raw concepts into immersive environments with high-end performance.</p>
-                <div class="space-y-6">
-                    <div class="flex gap-4 items-center">
-                        <div class="w-12 h-12 bg-zinc-900 rounded-xl flex items-center justify-center text-blue-500"><i class="fa-solid fa-bolt"></i></div>
-                        <div>
-                            <h4 class="font-bold uppercase tracking-tighter">Fast & Optimized Delivery</h4>
-                            <p class="text-zinc-500 text-sm">Buildings and Assets created for zero-lag experience.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="dark-card p-10 bg-gradient-to-br from-zinc-900 to-black border-blue-500/20">
-                    <i class="fa-brands fa-paypal text-3xl mb-4 text-blue-400"></i>
-                    <h3 class="font-black italic text-xl">USD</h3>
-                    <p class="text-zinc-600 text-[10px] mt-2 uppercase font-bold">PayPal Payments</p>
-                </div>
-                <div class="dark-card p-10 bg-gradient-to-br from-zinc-900 to-black border-yellow-400/10">
-                    <i class="fa-solid fa-coins text-3xl mb-4 text-yellow-500"></i>
-                    <h3 class="font-black italic text-xl">ROBUX</h3>
-                    <p class="text-zinc-600 text-[10px] mt-2 uppercase font-bold">Group Funds / Gamepasses</p>
-                </div>
-                <div class="dark-card p-10 bg-gradient-to-br from-zinc-900 to-black border-orange-500/20">
-                    <div class="flex gap-3 mb-4"><i class="fa-brands fa-bitcoin text-3xl text-orange-500"></i></div>
-                    <h3 class="font-black italic text-xl">CRYPTO</h3>
-                    <p class="text-zinc-600 text-[10px] mt-2 uppercase font-bold tracking-tighter">BTC, ETH, USDT</p>
-                </div>
-                <div class="dark-card p-10 bg-gradient-to-br from-zinc-900 to-black border-blue-600/30">
-                    <h3 class="font-black text-xl italic uppercase">%</h3>
-                    <h3 class="font-black text-xl italic uppercase">Management</h3>
-                    <p class="text-zinc-500 text-[10px] uppercase mt-1 font-bold">Revenue Splits</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="max-w-4xl mx-auto py-32 px-8">
-    <div class="dark-card p-12 relative overflow-hidden">
-        <h2 class="text-5xl font-black mb-4 italic uppercase tracking-tighter">HAVE A <span class="text-blue-500">PROJECT?</span></h2>
-        <p class="text-zinc-500 mb-10 font-bold text-xs uppercase tracking-widest">Let's talk about your next map, ambient or 3D model.</p>
-        
-        <form id="contact-form" action="https://formspree.io/f/mwvrgozk" method="POST" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input type="text" name="name" required placeholder="NAME" class="w-full bg-black border border-zinc-800 rounded-2xl p-5 focus:border-blue-500 outline-none transition text-sm font-bold tracking-widest">
-                <input type="email" name="email" required placeholder="EMAIL" class="w-full bg-black border border-zinc-800 rounded-2xl p-5 focus:border-blue-500 outline-none transition text-sm font-bold tracking-widest">
-            </div>
-
-            <div class="relative">
-                <select name="service" required class="w-full bg-black border border-zinc-800 rounded-2xl p-5 focus:border-blue-500 outline-none transition text-sm font-bold tracking-widest appearance-none text-zinc-400">
-                    <option value="" disabled selected>SELECT SERVICE</option>
-                    <option value="Full Map">Full Map Design</option>
-                    <option value="Ambient/Lighting">Ambient & Lighting</option>
-                    <option value="3D Models">3D Models / Assets</option>
-                    <option value="UI Design">UI Design</option>
-                    <option value="Management">Game Management</option>
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-5 text-zinc-500">
-                    <i class="fa-solid fa-chevron-down"></i>
-                </div>
-            </div>
-
-            <textarea name="message" required placeholder="PROJECT DETAILS..." rows="4" class="w-full bg-black border border-zinc-800 rounded-2xl p-5 focus:border-blue-500 outline-none transition text-sm font-bold tracking-widest"></textarea>
-            
-            <button type="submit" id="submit-btn" class="btn-blue w-full py-6 rounded-2xl font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3">
-                <span>Send Inquiry</span>
-                <i class="fa-solid fa-paper-plane text-xs"></i>
-            </button>
-
-            <p id="form-status" class="text-center text-[10px] font-bold uppercase tracking-widest mt-4 hidden"></p>
-        </form>
+<!-- HERO -->
+<section id="home">
+  <div class="hero-left">
+    <div class="hero-avail"><span class="avail-dot"></span>Available for work</div>
+    <h1 class="hero-name">SEBASTIAN<br><span class="dim">B.</span></h1>
+    <div class="hero-role">Roblox Developer · 3D Artist</div>
+    <p class="hero-desc">I turn raw concepts into immersive Roblox environments — large-scale maps, optimized 3D assets, and custom systems. Built fast. Built to last.</p>
+    <div class="hero-btns">
+      <a href="#work" class="btn-w">View Work <i class="fa-solid fa-arrow-right" style="font-size:.65rem"></i></a>
+      <a href="#contact" class="btn-outline">Get in Touch</a>
     </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-main-card">
+      <div id="hero-img" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n1.png?raw=true')"></div>
+      <div class="hero-card-glass-bar">
+        <div class="hcgb-left">
+          <div class="hcgb-tag">Featured Work</div>
+          <div class="hcgb-title" id="hero-label">Roblox Environment</div>
+        </div>
+        <div class="hcgb-right">
+          <div class="hcgb-pill">Map</div>
+          <div class="hcgb-pill">3D</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-thumbs">
+      <div class="hero-thumb active" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n1.png?raw=true')" onclick="setHero(this,'https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n1.png?raw=true','Roblox Environment')"></div>
+      <div class="hero-thumb" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n2.jpg?raw=true')" onclick="setHero(this,'https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n2.jpg?raw=true','Custom Models')"></div>
+      <div class="hero-thumb" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n3.jpg?raw=true')" onclick="setHero(this,'https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n3.jpg?raw=true','Lighting Design')"></div>
+      <div class="hero-thumb" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n4.png?raw=true')" onclick="setHero(this,'https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n4.png?raw=true','Game Environment')"></div>
+    </div>
+  </div>
 </section>
 
-<footer class="border-t border-zinc-900 py-20 px-8 text-center md:flex justify-between items-center max-w-7xl mx-auto text-zinc-600 text-[10px] font-bold uppercase tracking-widest">
-        <p>© 2026 SEBASTIAN B. • SEBASTIANDEVELOPS</p>
-        
-        <div class="flex gap-8 justify-center items-center mt-8 md:mt-0">
-            <div class="flex items-center gap-3 cursor-pointer hover:text-blue-500 transition group" onclick="copyDiscord()">
-                <span id="discord-user" class="text-[11px] font-black tracking-tighter lowercase">Skibiri_Sebas</span>
-                <i class="fa-brands fa-discord text-2xl"></i>
-                <span id="copy-toast" class="absolute mb-12 bg-blue-600 text-white px-2 py-1 rounded text-[8px] opacity-0 transition-opacity">¡Copi!</span>
-            </div>
+<!-- STATS -->
+<div class="stats-row reveal">
+  <div class="stat"><span class="stat-lbl">Experience</span><span class="stat-val">5 Y+</span></div>
+  <div class="stat"><span class="stat-lbl">Projects Delivered</span><span class="stat-val">50+</span></div>
+  <div class="stat"><span class="stat-lbl">Player Reach</span><span class="stat-val">2.6M+</span></div>
+  <div class="stat"><span class="stat-lbl"><span class="live-dot"></span> Live CCU</span><span class="stat-val" id="ccu">—</span></div>
+  <div class="stat"><span class="stat-lbl">Client Rating</span><span class="stat-val">4.7 ★</span></div>
+</div>
 
-            <a href="https://x.com/SebasDevelops" target="_blank" class="hover:text-blue-500 transition flex items-center gap-3">
-                <i class="fa-brands fa-x-twitter text-2xl"></i>
-            </a>
-        </div>
-    </footer>
+<!-- WORK -->
+<section id="work">
+  <div class="sec-head reveal">
+    <div>
+      <p class="sec-eyebrow">Selected Projects</p>
+      <h2 class="sec-title">FEATURED<br>WORK</h2>
+    </div>
+    <p class="sec-note">Different-style maps &amp; optimized 3D assets built for performance.</p>
+  </div>
+  <div class="track-wrap">
+    <div class="track">
+      <div class="pcard" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n1.png?raw=true')" onclick="openLb(this)"><div class="pcard-info"><div class="pcard-tag">Map Design</div><div class="pcard-name">Roblox Environment</div></div></div>
+      <div class="pcard" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n2.jpg?raw=true')" onclick="openLb(this)"><div class="pcard-info"><div class="pcard-tag">3D Assets</div><div class="pcard-name">Custom Models</div></div></div>
+      <div class="pcard" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n3.jpg?raw=true')" onclick="openLb(this)"><div class="pcard-info"><div class="pcard-tag">Ambient</div><div class="pcard-name">Lighting Design</div></div></div>
+      <div class="pcard" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n4.png?raw=true')" onclick="openLb(this)"><div class="pcard-info"><div class="pcard-tag">Full Map</div><div class="pcard-name">Game Environment</div></div></div>
+      <div class="pcard" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n5.jpg?raw=true')" onclick="openLb(this)"><div class="pcard-info"><div class="pcard-tag">3D Assets</div><div class="pcard-name">Blender Render</div></div></div>
+      <div class="pcard" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n6.jpg?raw=true')" onclick="openLb(this)"><div class="pcard-info"><div class="pcard-tag">Map Design</div><div class="pcard-name">Open World</div></div></div>
+      <div class="pcard" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n7.jpg?raw=true')" onclick="openLb(this)"><div class="pcard-info"><div class="pcard-tag">Map Design</div><div class="pcard-name">Roblox Scene</div></div></div>
+      <div class="pcard" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n8.jpg?raw=true')" onclick="openLb(this)"><div class="pcard-info"><div class="pcard-tag">Full Map</div><div class="pcard-name">Detailed Scene</div></div></div>
+      <div class="pcard" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n9.jpg?raw=true')" onclick="openLb(this)"><div class="pcard-info"><div class="pcard-tag">Map Design</div><div class="pcard-name">Environment Art</div></div></div>
+      <!-- duplicates for infinite loop -->
+      <div class="pcard" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n1.png?raw=true')" onclick="openLb(this)"><div class="pcard-info"><div class="pcard-tag">Map Design</div><div class="pcard-name">Roblox Environment</div></div></div>
+      <div class="pcard" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n2.jpg?raw=true')" onclick="openLb(this)"><div class="pcard-info"><div class="pcard-tag">3D Assets</div><div class="pcard-name">Custom Models</div></div></div>
+      <div class="pcard" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n3.jpg?raw=true')" onclick="openLb(this)"><div class="pcard-info"><div class="pcard-tag">Ambient</div><div class="pcard-name">Lighting Design</div></div></div>
+      <div class="pcard" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n4.png?raw=true')" onclick="openLb(this)"><div class="pcard-info"><div class="pcard-tag">Full Map</div><div class="pcard-name">Game Environment</div></div></div>
+      <div class="pcard" style="background-image:url('https://github.com/SebastiannDevelops/Page/blob/main/Imgs/n5.jpg?raw=true')" onclick="openLb(this)"><div class="pcard-info"><div class="pcard-tag">3D Assets</div><div class="pcard-name">Blender Render</div></div></div>
+    </div>
+  </div>
+</section>
 
-    <script>
-        function openLightbox(element) {
-            const bgImg = element.style.backgroundImage;
-            const url = bgImg.replace('url("', '').replace('")', '');
-            const lightbox = document.getElementById('lightbox');
-            const lightboxImg = document.getElementById('lightbox-img');
-            lightboxImg.src = url;
-            lightbox.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeLightbox() {
-            const lightbox = document.getElementById('lightbox');
-            lightbox.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        }
-    </script>
+<!-- LIGHTBOX -->
+<div id="lb" onclick="closeLb()">
+  <span class="lb-x">&times;</span>
+  <img id="lb-img" src="" alt="Project">
+</div>
 
-    <script>
-        const form = document.getElementById("contact-form");
-        const status = document.getElementById("form-status");
+<!-- ════════════════════════════════════════════
+  GAMES I'VE WORKED FOR
+  Para añadir un juego: agrega { placeId: 'ID' } al array GAMES_LIST
+  Todo lo demás se obtiene automáticamente de la API de Roblox.
+  ════════════════════════════════════════════ -->
+<section id="games">
+  <div class="sec-head reveal">
+    <div>
+      <p class="sec-eyebrow">Live Games</p>
+      <h2 class="sec-title">GAMES I'VE<br>WORKED FOR</h2>
+    </div>
+    <p class="sec-note">Real games I've contributed to — maps, assets &amp; systems.</p>
+  </div>
+  <div class="games-bento reveal" id="games-grid">
+    <p style="color:var(--muted);font-size:.85rem;padding:20px 0">Loading games...</p>
+  </div>
+</section>
 
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById("submit-btn");
-            const data = new FormData(e.target);
-            btn.disabled = true;
-            btn.innerHTML = '<span>SENDING...</span>';
-            fetch(e.target.action, {
-                method: form.method,
-                body: data,
-                headers: { 'Accept': 'application/json' }
-            }).then(response => {
-                if (response.ok) {
-                    status.innerText = "¡MESSAGE SENT SUCCESSFULLY!";
-                    status.classList.remove("hidden", "text-red-500");
-                    status.classList.add("text-blue-500");
-                    form.reset();
-                } else {
-                    status.innerText = "OOPS! THERE WAS AN ERROR.";
-                    status.classList.remove("hidden", "text-blue-500");
-                    status.classList.add("text-red-500");
-                }
-                btn.disabled = false;
-                btn.innerHTML = '<span>Send Inquiry</span> <i class="fa-solid fa-paper-plane text-xs"></i>';
-            });
-        });
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="sec-head reveal">
+    <div>
+      <p class="sec-eyebrow">Client Reviews</p>
+      <h2 class="sec-title">WHAT CLIENTS<br>SAY</h2>
+    </div>
+  </div>
+  <div class="testi-grid reveal">
+    <div class="rating-card">
+      <div class="rating-big">
+        <div class="rating-stars">★★★★★</div>
+        <div class="rating-num">4.7<span style="font-size:1.2rem;opacity:.4">/5</span></div>
+        <div class="rating-sub">Based on 18 client reviews</div>
+      </div>
+      <div class="rating-pills">
+        <div class="rating-pill"><i class="fa-solid fa-star"></i> 4.7/5 Average Rating</div>
+        <div class="rating-pill"><i class="fa-solid fa-users"></i> 15+ Satisfied Clients</div>
+        <div class="rating-pill"><i class="fa-solid fa-check"></i> 98% Delivery Rate</div>
+        <div class="rating-pill"><i class="fa-solid fa-box"></i> 50+ Projects Completed</div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★⯨</div>
+      <p class="testi-text">"Sebastian delivered a very good map for my game, it was optimized and good-looking."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">MN</div>
+        <div><div class="testi-name">Midnight</div><div class="testi-role">Game Owner · Roblox</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"At first I wasnt completely sure what to expect, but when Sebastian delivered the map I was genuinely impressed with the quality."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">SL</div>
+        <div><div class="testi-name">Sly</div><div class="testi-role">Studio Lead · Roblox</div></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        function copyDiscord() {
-            const username = "Skibiri_Sebas";
-            navigator.clipboard.writeText(username);
-            const toast = document.getElementById('copy-toast');
-            toast.style.opacity = '1';
-            setTimeout(() => { toast.style.opacity = '0'; }, 2000);
-        }
+<!-- ABOUT -->
+<section id="about">
+  <div class="reveal">
+    <p class="about-tag">About</p>
+    <h2 class="about-title">EVERYTHING<br>YOUR GAME<br><em>NEEDS.</em></h2>
+    <p class="about-body">I specialize in turning raw concepts into immersive environments with high-end performance. From large-scale worlds to individual assets — delivered fast and built to last.</p>
+    <div class="caps">
+      <div class="cap-item"><span>3D Assets — Blender</span><span class="cap-arrow">↗</span></div>
+      <div class="cap-item"><span>Game Dev — Roblox Studio</span><span class="cap-arrow">↗</span></div>
+      <div class="cap-item"><span>Fast &amp; Optimized Delivery</span><span class="cap-arrow">↗</span></div>
+    </div>
+  </div>
+  <div class="reveal">
+    <p class="pay-head">Payment Methods</p>
+    <div class="pay-grid">
+      <div class="pay-card"><div class="pay-icon"><i class="fa-brands fa-bitcoin"></i></div><div class="pay-name">CRYPTO</div><div class="pay-sub">BTC · ETH · USDT</div></div>
+      <div class="pay-card"><div class="pay-icon"><i class="fa-solid fa-coins"></i></div><div class="pay-name">ROBUX</div><div class="pay-sub">Group Funds · Gamepasses</div></div>
+    </div>
+  </div>
+</section>
 
-        function formatNumber(num) {
-            if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
-            if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
-            return num;
-        }
+<!-- CONTACT -->
+<section id="contact">
+  <div class="reveal">
+    <p class="sec-eyebrow" style="margin-bottom:12px">Get in Touch</p>
+    <h2 class="contact-title">HAVE A<br><em>PROJECT?</em></h2>
+    <p class="contact-sub">Let's talk about your next map, ambient or 3D model. Fast responses guaranteed.</p>
+    <div class="socials">
+      <a href="https://discord.com/users/1241206277657591880" target="_blank" class="soc-link">
+        <span class="soc-name"><i class="fa-brands fa-discord"></i> Discord</span>
+        <span class="soc-handle">Skibiri_Sebas ↗</span>
+      </a>
+      <a href="https://x.com/SebasDevelops" target="_blank" class="soc-link">
+        <span class="soc-name"><i class="fa-brands fa-x-twitter"></i> X / Twitter</span>
+        <span class="soc-handle">@SebasDevelops ↗</span>
+      </a>
+    </div>
+  </div>
+  <div class="reveal">
+    <form id="cform" action="https://formspree.io/f/mwvrgozk" method="POST" class="cform">
+      <div class="form-row">
+        <input type="text" name="name" required placeholder="Name" class="finput">
+        <input type="email" name="email" required placeholder="Email" class="finput">
+      </div>
+      <select name="service" required class="finput">
+        <option value="" disabled selected>Select Service</option>
+        <option value="Full Map">Full Map Design</option>
+        <option value="Ambient/Lighting">Ambient &amp; Lighting</option>
+        <option value="3D Models">3D Models / Assets</option>
+        <option value="Management">Game Management</option>
+      </select>
+      <textarea name="message" required placeholder="Project Details..." class="finput"></textarea>
+      <button type="submit" class="fsub" id="fsub">
+        Send Inquiry <i class="fa-solid fa-arrow-right" style="font-size:.65rem"></i>
+      </button>
+      <p id="fstatus"></p>
+    </form>
+  </div>
+</section>
 
-        async function updateCCU() {
-            const placeIds = ["138138037549363" , "91023290238747"];
-            const ccuElement = document.getElementById('ccu-count');
-            let totalPlaying = 0;
-            try {
-                for (const id of placeIds) {
-                    try {
-                        const idRes = await fetch(`https://apis.roproxy.com/universes/v1/places/${id}/universe`);
-                        const idData = await idRes.json();
-                        const universeId = idData.universeId;
-                        if (universeId) {
-                            const ccuRes = await fetch(`https://games.roproxy.com/v1/games?universeIds=${universeId}`);
-                            const ccuData = await ccuRes.json();
-                            if (ccuData?.data?.[0]) totalPlaying += ccuData.data[0].playing;
-                        }
-                    } catch (e) { console.error(`Error con ID ${id}:`, e); }
-                }
-                ccuElement.innerText = formatNumber(totalPlaying); 
-            } catch (e) { ccuElement.innerText = "0"; }
-        }
+<!-- FOOTER -->
+<footer>
+  <p class="foot-copy">© 2026 Sebastian B. · Sebastiandevelops</p>
+  <div class="foot-links">
+    <a href="https://discord.com/users/1241206277657591880" target="_blank" class="foot-btn"><i class="fa-brands fa-discord"></i> Discord</a>
+    <a href="https://x.com/SebasDevelops" target="_blank" class="foot-btn"><i class="fa-brands fa-x-twitter"></i> Twitter</a>
+  </div>
+</footer>
 
-        updateCCU();
-        setInterval(updateCCU, 30000);
+<!-- MUSIC BAR -->
+<div id="music-wrap">
+  <div id="music-pill" onclick="toggleMusic()">
+    <span class="pill-note">♫</span>
+    <span>Currently Listening</span>
+    <i class="fa-solid fa-chevron-up pill-chevron"></i>
+  </div>
 
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
-            });
-        });
-    </script>
+  <div id="music-panel">
+    <iframe
+      style="border-radius:12px"
+      src="https://open.spotify.com/embed/album/22dAgxWXl4mZ8L3O0YPMkA?theme=0"
+      width="100%"
+      height="152"
+      frameborder="0"
+      allowfullscreen=""
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy">
+    </iframe>
+  </div>
+</div>
+
+<script>
+/* ────────────────────────────────────────────────
+   GAMES LIST — solo agrega placeIds aquí
+   ──────────────────────────────────────────────── */
+var GAMES_LIST = [
+  { placeId: '138138037549363' },
+  { placeId: '112122120962964' }
+];
+
+/* ── utils ── */
+function fmtN(n) {
+  if (n == null || isNaN(n)) return '—';
+  if (n >= 1e9) return (n / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
+  if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (n >= 1e3) return (n / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+  return String(n);
+}
+function fmtT(s) {
+  if (isNaN(s)) return '0:00';
+  var m = Math.floor(s / 60), sec = Math.floor(s % 60);
+  return m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+
+/* ── cursor ── */
+var cur = document.getElementById('cur');
+var ring = document.getElementById('cur-ring');
+var mx = window.innerWidth / 2, my = window.innerHeight / 2;
+var rx = mx, ry = my;
+
+document.addEventListener('mousemove', function(e) {
+  mx = e.clientX; my = e.clientY;
+  cur.style.left = mx + 'px';
+  cur.style.top = my + 'px';
+});
+(function animRing() {
+  rx += (mx - rx) * 0.11;
+  ry += (my - ry) * 0.11;
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+  requestAnimationFrame(animRing);
+})();
+
+function addCursorHover(el) {
+  el.addEventListener('mouseenter', function() { cur.classList.add('big'); ring.classList.add('big'); });
+  el.addEventListener('mouseleave', function() { cur.classList.remove('big'); ring.classList.remove('big'); });
+}
+document.querySelectorAll('a, button, .pcard, .pay-card, .hero-thumb, .cap-item, .soc-link, .testi-card, .rating-pill').forEach(addCursorHover);
+
+/* ── cursor glow ── */
+var glow = document.getElementById('cursor-glow');
+var gx = window.innerWidth / 2, gy = window.innerHeight / 2;
+var tgx = gx, tgy = gy;
+document.addEventListener('mousemove', function(e) { tgx = e.clientX; tgy = e.clientY; });
+(function animGlow() {
+  gx += (tgx - gx) * 0.06;
+  gy += (tgy - gy) * 0.06;
+  glow.style.left = gx + 'px';
+  glow.style.top = gy + 'px';
+  requestAnimationFrame(animGlow);
+})();
+
+/* ── mobile menu ── */
+function toggleMob() {
+  document.getElementById('mobMenu').classList.toggle('open');
+}
+
+/* ── hero switcher ── */
+function setHero(thumb, url, label) {
+  document.querySelectorAll('.hero-thumb').forEach(function(t) { t.classList.remove('active'); });
+  thumb.classList.add('active');
+  var img = document.getElementById('hero-img');
+  img.style.opacity = '0';
+  setTimeout(function() {
+    img.style.backgroundImage = "url('" + url + "')";
+    img.style.opacity = '1';
+  }, 200);
+  document.getElementById('hero-label').textContent = label;
+}
+
+/* ── lightbox ── */
+function openLb(el) {
+  var url = el.style.backgroundImage.replace(/url\(["']?/, '').replace(/["']?\)/, '');
+  document.getElementById('lb-img').src = url;
+  document.getElementById('lb').classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+function closeLb() {
+  document.getElementById('lb').classList.remove('on');
+  document.body.style.overflow = '';
+}
+
+/* ── scroll reveal ── */
+var ro = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(function(r) { ro.observe(r); });
+
+/* ── form ── */
+document.getElementById('cform').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var btn = document.getElementById('fsub'), st = document.getElementById('fstatus');
+  btn.disabled = true; btn.innerHTML = 'Sending...';
+  fetch(e.target.action, { method: 'POST', body: new FormData(e.target), headers: { Accept: 'application/json' } })
+    .then(function(res) {
+      if (res.ok) { st.textContent = "Message sent!"; st.style.color = 'rgba(255,255,255,.5)'; e.target.reset(); }
+      else { st.textContent = 'Something went wrong.'; st.style.color = '#f87171'; }
+      st.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = 'Send Inquiry <i class="fa-solid fa-arrow-right" style="font-size:.65rem"></i>';
+    });
+});
+
+/* ── games fetch & render ── */
+function fetchGame(placeId) {
+  return fetch('https://apis.roproxy.com/universes/v1/places/' + placeId + '/universe')
+    .then(function(r) { return r.json(); })
+    .then(function(uData) {
+      var uid = uData.universeId;
+      if (!uid) return null;
+      return Promise.all([
+        fetch('https://games.roproxy.com/v1/games?universeIds=' + uid).then(function(r) { return r.json(); }),
+        fetch('https://thumbnails.roproxy.com/v1/games/icons?universeIds=' + uid + '&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false').then(function(r) { return r.json(); })
+      ]).then(function(results) {
+        var g = results[0].data && results[0].data[0];
+        if (!g) return null;
+        return {
+          placeId: placeId,
+          name: g.name,
+          ccu: g.playing || 0,
+          visits: g.visits || 0,
+          thumbnail: (results[1].data && results[1].data[0] && results[1].data[0].imageUrl) || '',
+          url: 'https://www.roblox.com/games/' + placeId
+        };
+      });
+    })
+    .catch(function() { return null; });
+}
+
+function renderGames(data) {
+  var grid = document.getElementById('games-grid');
+  var valid = data.filter(function(g) { return g !== null; });
+  if (!valid.length) { grid.innerHTML = '<p style="color:var(--muted);padding:20px 0">No games loaded.</p>'; return; }
+
+  var sorted = valid.slice().sort(function(a, b) {
+    return b.ccu !== a.ccu ? b.ccu - a.ccu : b.visits - a.visits;
+  });
+
+  var trending = sorted[0];
+  var smalls = sorted.slice(1, 5);
+
+  function smallCard(g) {
+    return '<div class="game-card small" onclick="window.open(\'' + g.url + '\',\'_blank\')">' +
+      '<div class="game-thumb" style="aspect-ratio:1/1;background-image:url(\'' + g.thumbnail + '\')">' +
+      '<div class="game-live-badge"><span style="width:5px;height:5px;border-radius:50%;background:#4ade80;animation:blink 2s infinite;display:inline-block"></span> ' + fmtN(g.ccu) + '</div>' +
+      '</div><div class="game-info">' +
+      '<div class="game-name">' + g.name + '</div>' +
+      '<div class="game-stats">' +
+      '<span class="game-stat"><i class="fa-solid fa-user"></i> CCU: ' + fmtN(g.ccu) + '</span>' +
+      '<span class="game-stat"><i class="fa-solid fa-play"></i> ' + fmtN(g.visits) + '</span>' +
+      '</div></div></div>';
+  }
+
+  function trendingCard(g) {
+    return '<div class="game-card trending" onclick="window.open(\'' + g.url + '\',\'_blank\')">' +
+      '<div class="game-thumb" style="height:68%;min-height:200px;background-image:url(\'' + g.thumbnail + '\')">' +
+      '<div class="trending-badge"><span class="trending-dot"></span> TRENDING</div>' +
+      '<div class="game-live-badge"><span style="width:5px;height:5px;border-radius:50%;background:#4ade80;animation:blink 2s infinite;display:inline-block"></span> ' + fmtN(g.ccu) + '</div>' +
+      '</div><div class="game-info">' +
+      '<div class="game-name">' + g.name + '</div>' +
+      '<div class="game-stats">' +
+      '<span class="game-stat"><i class="fa-solid fa-user"></i> CCU: ' + fmtN(g.ccu) + '</span>' +
+      '<span class="game-stat"><i class="fa-solid fa-play"></i> ' + fmtN(g.visits) + '</span>' +
+      '</div></div></div>';
+  }
+
+  var html = smalls.map(smallCard).join('') + trendingCard(trending);
+  grid.innerHTML = html;
+  document.querySelectorAll('.game-card').forEach(addCursorHover);
+}
+
+function loadGames() {
+  Promise.all(GAMES_LIST.map(function(g) { return fetchGame(g.placeId); }))
+    .then(renderGames);
+}
+loadGames();
+setInterval(loadGames, 60000);
+
+/* ── live CCU stat ── */
+function updateHeaderCCU() {
+  Promise.all(GAMES_LIST.map(function(g) {
+    return fetch('https://apis.roproxy.com/universes/v1/places/' + g.placeId + '/universe')
+      .then(function(r) { return r.json(); })
+      .then(function(u) {
+        if (!u.universeId) return 0;
+        return fetch('https://games.roproxy.com/v1/games?universeIds=' + u.universeId)
+          .then(function(r) { return r.json(); })
+          .then(function(d) { return (d.data && d.data[0] && d.data[0].playing) || 0; });
+      })
+      .catch(function() { return 0; });
+  })).then(function(vals) {
+    var total = vals.reduce(function(a, b) { return a + b; }, 0);
+    document.getElementById('ccu').textContent = fmtN(total);
+  });
+}
+updateHeaderCCU();
+setInterval(updateHeaderCCU, 30000);
+
+/* ── smooth scroll ── */
+document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+  a.addEventListener('click', function(e) {
+    e.preventDefault();
+    var t = document.querySelector(a.getAttribute('href'));
+    if (t) window.scrollTo({ top: t.offsetTop - 80, behavior: 'smooth' });
+  });
+});
+
+/* ── music player ── */
+var TRACKS = [
+  { title: 'No Sleep',          artist: 'Witt Lowry', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+  { title: 'Piece of Your Heart', artist: 'Meduza',   src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
+  { title: 'Losing It',         artist: 'FISHER',     src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' }
+];
+var tIdx = 0, isPlay = false, isMute = false;
+var aud = document.getElementById('mp-audio');
+var pIcon = document.getElementById('mp-play-icon');
+var disc = document.getElementById('mp-disc');
+
+function loadTrack(i, play) {
+  var t = TRACKS[i];
+  document.getElementById('mp-title').textContent = t.title;
+  document.getElementById('mp-artist').textContent = t.artist;
+  aud.src = t.src; aud.load();
+  if (play) { aud.play().catch(function() {}); setPlay(true); }
+}
+function setPlay(p) {
+  isPlay = p;
+  pIcon.className = p ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+  disc.classList.toggle('playing', p);
+}
+
+document.getElementById('mp-play').addEventListener('click', function() {
+  if (!aud.src || aud.src === location.href) { loadTrack(tIdx, true); return; }
+  if (isPlay) { aud.pause(); setPlay(false); } else { aud.play().catch(function() {}); setPlay(true); }
+});
+document.getElementById('mp-prev').addEventListener('click', function() {
+  tIdx = (tIdx - 1 + TRACKS.length) % TRACKS.length; loadTrack(tIdx, isPlay);
+});
+document.getElementById('mp-next').addEventListener('click', function() {
+  tIdx = (tIdx + 1) % TRACKS.length; loadTrack(tIdx, isPlay);
+});
+aud.addEventListener('timeupdate', function() {
+  if (!aud.duration) return;
+  var p = (aud.currentTime / aud.duration) * 100;
+  document.getElementById('mp-fill').style.width = p + '%';
+  document.getElementById('mp-tdot').style.left = p + '%';
+  document.getElementById('mp-cur').textContent = fmtT(aud.currentTime);
+});
+aud.addEventListener('loadedmetadata', function() {
+  document.getElementById('mp-dur').textContent = fmtT(aud.duration);
+});
+aud.addEventListener('ended', function() {
+  tIdx = (tIdx + 1) % TRACKS.length; loadTrack(tIdx, true);
+});
+var seeking = false;
+var seekEl = document.getElementById('mp-seek');
+function doSeek(e) {
+  var r = seekEl.getBoundingClientRect();
+  var p = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+  if (aud.duration) aud.currentTime = p * aud.duration;
+}
+seekEl.addEventListener('mousedown', function(e) { seeking = true; doSeek(e); });
+document.addEventListener('mousemove', function(e) { if (seeking) doSeek(e); });
+document.addEventListener('mouseup', function() { seeking = false; });
+aud.volume = 0.7;
+document.getElementById('mp-vol-range').addEventListener('input', function() {
+  aud.volume = this.value / 100; isMute = false; aud.muted = false; updVol();
+});
+document.getElementById('mp-mute').addEventListener('click', function() {
+  isMute = !isMute; aud.muted = isMute; updVol();
+});
+function updVol() {
+  var i = document.getElementById('mp-vol-icon');
+  if (isMute || aud.volume === 0) i.className = 'fa-solid fa-volume-xmark';
+  else if (aud.volume < 0.5) i.className = 'fa-solid fa-volume-low';
+  else i.className = 'fa-solid fa-volume-high';
+}
+
+function toggleMusic() {
+  document.getElementById('music-wrap').classList.toggle('open');
+}
+</script>
 </body>
 </html>
