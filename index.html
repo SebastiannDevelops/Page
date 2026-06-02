@@ -239,31 +239,42 @@ option{background:#111}
 @keyframes noteBounce{from{transform:translateY(0)}to{transform:translateY(-2px)}}
 .pill-chevron{font-size:.5rem;transition:transform .3s;opacity:.5}
 #music-wrap.open .pill-chevron{transform:rotate(180deg)}
-
 #music-panel{
+  display:flex;align-items:center;gap:14px;
   width:100%;
-  background:transparent;
-  border:none;
-  backdrop-filter:none;
-  box-shadow:none;
-
-  max-height:0;
-  overflow:hidden;
-  opacity:0;
-
-  transition:max-height .35s cubic-bezier(.23,1,.32,1),opacity .3s;
+  background:rgba(8,8,8,.6);border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(30px) saturate(200%);-webkit-backdrop-filter:blur(30px) saturate(200%);
+  border-radius:20px;box-shadow:0 8px 48px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06);
+  max-height:0;overflow:hidden;opacity:0;padding:0 18px;
+  transition:max-height .35s cubic-bezier(.23,1,.32,1),opacity .3s,padding .3s;
   pointer-events:none;
 }
-
-#music-wrap.open #music-panel{
-  max-height:180px;
-  opacity:1;
-  pointer-events:all;
-}
-
-#music-wrap{
-  width:min(420px, calc(100vw - 32px));
-}
+#music-wrap.open #music-panel{max-height:100px;opacity:1;padding:10px 18px;pointer-events:all}
+.mp-art{width:32px;height:32px;flex-shrink:0}
+.mp-disc{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;animation:spin 8s linear infinite;animation-play-state:paused}
+.mp-disc.playing{animation-play-state:running}
+.mp-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3)}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.mp-info{display:flex;flex-direction:column;gap:1px;width:100px;flex-shrink:0;min-width:0}
+.mp-title{font-size:.72rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-artist{font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-controls{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.mp-btn{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.4);padding:4px;font-size:.8rem;transition:color .2s,transform .15s;display:flex;align-items:center;line-height:1}
+.mp-btn:hover{color:#fff;transform:scale(1.12)}
+.mp-btn.play{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);color:#fff;font-size:.72rem;justify-content:center}
+.mp-btn.play:hover{background:rgba(255,255,255,.22)}
+.mp-progress{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0}
+.mp-seek{position:relative;height:3px;border-radius:100px;background:rgba(255,255,255,.1);cursor:pointer}
+.mp-fill{height:100%;border-radius:100px;background:rgba(255,255,255,.75);width:0%;pointer-events:none}
+.mp-tdot{position:absolute;top:50%;transform:translate(50%,-50%);width:9px;height:9px;border-radius:50%;background:#fff;opacity:0;transition:opacity .2s;pointer-events:none}
+.mp-seek:hover .mp-tdot{opacity:1}
+.mp-times{display:flex;justify-content:space-between}
+.mp-time{font-family:'DM Mono',monospace;font-size:.55rem;color:rgba(255,255,255,.28)}
+.mp-vol{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.mp-vol-slider{-webkit-appearance:none;appearance:none;width:62px;height:3px;border-radius:100px;background:rgba(255,255,255,.12);outline:none;cursor:pointer}
+.mp-vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:#fff;cursor:pointer;transition:transform .15s}
+.mp-vol-slider::-webkit-slider-thumb:hover{transform:scale(1.3)}
+.mp-vol-slider::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:#fff;border:none;cursor:pointer}
 
 /* FOOTER */
 footer{border-top:1px solid var(--border);padding:24px 5vw;display:flex;justify-content:space-between;align-items:center;margin-bottom:80px}
@@ -377,7 +388,7 @@ footer{border-top:1px solid var(--border);padding:24px 5vw;display:flex;justify-
   <div class="stat"><span class="stat-lbl">Projects Delivered</span><span class="stat-val">50+</span></div>
   <div class="stat"><span class="stat-lbl">Player Reach</span><span class="stat-val">2.6M+</span></div>
   <div class="stat"><span class="stat-lbl"><span class="live-dot"></span> Live CCU</span><span class="stat-val" id="ccu">—</span></div>
-  <div class="stat"><span class="stat-lbl">Client Rating</span><span class="stat-val">4.7 ★</span></div>
+  <div class="stat"><span class="stat-lbl">Client Rating</span><span class="stat-val">4.9 ★</span></div>
 </div>
 
 <!-- WORK -->
@@ -446,30 +457,30 @@ footer{border-top:1px solid var(--border);padding:24px 5vw;display:flex;justify-
     <div class="rating-card">
       <div class="rating-big">
         <div class="rating-stars">★★★★★</div>
-        <div class="rating-num">4.7<span style="font-size:1.2rem;opacity:.4">/5</span></div>
+        <div class="rating-num">4.9<span style="font-size:1.2rem;opacity:.4">/5</span></div>
         <div class="rating-sub">Based on 18 client reviews</div>
       </div>
       <div class="rating-pills">
-        <div class="rating-pill"><i class="fa-solid fa-star"></i> 4.7/5 Average Rating</div>
+        <div class="rating-pill"><i class="fa-solid fa-star"></i> 4.9/5 Average Rating</div>
         <div class="rating-pill"><i class="fa-solid fa-users"></i> 15+ Satisfied Clients</div>
-        <div class="rating-pill"><i class="fa-solid fa-check"></i> 98% Delivery Rate</div>
+        <div class="rating-pill"><i class="fa-solid fa-check"></i> 100% Delivery Rate</div>
         <div class="rating-pill"><i class="fa-solid fa-box"></i> 50+ Projects Completed</div>
       </div>
     </div>
     <div class="testi-card">
-      <div class="testi-stars">★★★★⯨</div>
-      <p class="testi-text">"Sebastian delivered a very good map for my game, it was optimized and good-looking."</p>
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Sebastian delivered the map ahead of schedule. The level of detail and optimization was beyond what I expected — zero lag on 500+ players."</p>
       <div class="testi-author">
-        <div class="testi-avatar">MN</div>
-        <div><div class="testi-name">Midnight</div><div class="testi-role">Game Owner · Roblox</div></div>
+        <div class="testi-avatar">JR</div>
+        <div><div class="testi-name">JRocker</div><div class="testi-role">Game Owner · Roblox</div></div>
       </div>
     </div>
     <div class="testi-card">
       <div class="testi-stars">★★★★★</div>
-      <p class="testi-text">"At first I wasnt completely sure what to expect, but when Sebastian delivered the map I was genuinely impressed with the quality."</p>
+      <p class="testi-text">"Best 3D artist I've worked with in this space. His Blender renders translated perfectly into Roblox. Would hire again without hesitation."</p>
       <div class="testi-author">
-        <div class="testi-avatar">SL</div>
-        <div><div class="testi-name">Sly</div><div class="testi-role">Studio Lead · Roblox</div></div>
+        <div class="testi-avatar">AX</div>
+        <div><div class="testi-name">AceX Dev</div><div class="testi-role">Studio Lead · Roblox</div></div>
       </div>
     </div>
   </div>
@@ -544,6 +555,195 @@ footer{border-top:1px solid var(--border);padding:24px 5vw;display:flex;justify-
   </div>
 </footer>
 
+<!-- ═══════════════════════════════════════════════════════
+     CLIENT PORTAL — login button, modals, dashboard
+     Sits on top of the portfolio without touching its design
+     ═══════════════════════════════════════════════════════ -->
+
+<!-- Portal styles -->
+<style>
+/* Portal button in nav area */
+#portal-btn{
+  position:fixed;top:16px;right:calc((100vw - min(calc(100% - 48px),1100px))/2 + 16px);
+  z-index:1001;
+  display:flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-radius:100px;padding:8px 16px;
+  font-family:'DM Mono',monospace;font-size:.65rem;
+  text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.7);
+  cursor:pointer;transition:all .2s;
+}
+#portal-btn:hover{border-color:rgba(255,255,255,.3);color:#fff;background:rgba(255,255,255,.1)}
+#portal-btn .portal-avatar{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700}
+
+/* Overlay backdrop */
+.portal-overlay{
+  position:fixed;inset:0;z-index:9600;
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;
+  padding:20px;
+}
+.portal-overlay.on{display:flex}
+
+/* Modal base */
+.portal-modal{
+  background:#0a0a0a;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:20px;
+  width:100%;max-width:440px;
+  padding:32px;
+  position:relative;
+  animation:modalIn .25s cubic-bezier(.23,1,.32,1) both;
+}
+.portal-modal.wide{max-width:820px}
+@keyframes modalIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.modal-close{position:absolute;top:16px;right:20px;background:none;border:none;color:rgba(255,255,255,.35);font-size:1.1rem;cursor:pointer;transition:color .2s;line-height:1}
+.modal-close:hover{color:#fff}
+.modal-title{font-size:1.3rem;font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
+.modal-sub{font-family:'DM Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-bottom:24px}
+.modal-tabs{display:flex;gap:4px;margin-bottom:24px;background:rgba(255,255,255,.05);border-radius:10px;padding:4px}
+.modal-tab{flex:1;padding:8px;border:none;background:transparent;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;border-radius:8px;cursor:pointer;transition:all .2s}
+.modal-tab.active{background:rgba(255,255,255,.1);color:#fff}
+
+/* Form inputs in portal */
+.p-input{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;padding:13px 16px;
+  color:#fff;font-family:'Syne',sans-serif;font-size:.82rem;
+  outline:none;width:100%;margin-bottom:10px;
+  transition:border-color .2s;
+  -webkit-appearance:none;appearance:none;
+}
+.p-input::placeholder{color:rgba(255,255,255,.22)}
+.p-input:focus{border-color:rgba(255,255,255,.28)}
+.p-btn{
+  width:100%;padding:14px;border-radius:10px;
+  background:#fff;color:#000;border:none;
+  font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;cursor:pointer;
+  transition:opacity .2s,transform .15s;margin-top:4px;
+}
+.p-btn:hover{opacity:.88;transform:translateY(-1px)}
+.p-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.p-err{font-family:'DM Mono',monospace;font-size:.62rem;color:#f87171;text-align:center;padding:6px 0;display:none}
+.p-ok{font-family:'DM Mono',monospace;font-size:.62rem;color:#4ade80;text-align:center;padding:6px 0;display:none}
+.p-divider{text-align:center;font-family:'DM Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.2);margin:12px 0;display:flex;align-items:center;gap:10px}
+.p-divider::before,.p-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07)}
+
+/* Dashboard */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
+.dash-stat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px}
+.dash-stat-val{font-size:1.6rem;font-weight:800;letter-spacing:-.03em;margin-bottom:2px}
+.dash-stat-lbl{font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35)}
+
+/* Tier badge */
+.tier-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:100px;
+  font-family:'DM Mono',monospace;font-size:.6rem;
+  text-transform:uppercase;letter-spacing:.1em;font-weight:700;
+}
+.tier-new       {background:rgba(255,255,255,.08);color:rgba(255,255,255,.6)}
+.tier-returning {background:rgba(59,130,246,.15);color:#93c5fd}
+.tier-trusted   {background:rgba(168,85,247,.15);color:#c4b5fd}
+.tier-premium   {background:rgba(234,179,8,.15);color:#fde68a}
+.tier-legendary {background:rgba(239,68,68,.15);color:#fca5a5}
+
+/* Points bar */
+.points-bar-wrap{margin:16px 0}
+.points-bar-info{display:flex;justify-content:space-between;margin-bottom:6px}
+.points-bar-label{font-family:'DM Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35)}
+.points-bar-val{font-family:'DM Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.6)}
+.points-bar-bg{height:4px;background:rgba(255,255,255,.08);border-radius:100px;overflow:hidden}
+.points-bar-fill{height:100%;background:#fff;border-radius:100px;transition:width .8s cubic-bezier(.23,1,.32,1)}
+
+/* Project list */
+.proj-list{display:flex;flex-direction:column;gap:8px;max-height:340px;overflow-y:auto}
+.proj-list::-webkit-scrollbar{width:3px}
+.proj-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+.proj-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 16px;cursor:pointer;transition:border-color .2s,background .2s}
+.proj-card:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.05)}
+.proj-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.proj-card-title{font-size:.85rem;font-weight:700}
+.status-pill{font-family:'DM Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.08em;padding:3px 8px;border-radius:100px}
+.status-pending  {background:rgba(255,255,255,.07);color:rgba(255,255,255,.45)}
+.status-active   {background:rgba(59,130,246,.15);color:#93c5fd}
+.status-review   {background:rgba(234,179,8,.15);color:#fde68a}
+.status-completed{background:rgba(74,222,128,.12);color:#86efac}
+.proj-card-meta{font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:.08em}
+
+/* Project detail / timeline */
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.tl-item:last-child{border-bottom:none}
+.tl-dot-wrap{display:flex;flex-direction:column;align-items:center;gap:0}
+.tl-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25);flex-shrink:0;margin-top:3px}
+.tl-dot.latest{background:#4ade80}
+.tl-line{width:1px;flex:1;background:rgba(255,255,255,.07);margin-top:4px}
+.tl-body{flex:1}
+.tl-msg{font-size:.82rem;font-weight:500;margin-bottom:2px}
+.tl-date{font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(255,255,255,.28)}
+
+/* Back button */
+.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;cursor:pointer;padding:0;margin-bottom:20px;transition:color .2s}
+.back-btn:hover{color:#fff}
+
+@media(max-width:600px){
+  .portal-modal{padding:24px 20px}
+  .dash-grid{grid-template-columns:1fr 1fr}
+  .portal-modal.wide{max-width:100%}
+}
+</style>
+
+<!-- Portal trigger button -->
+<div id="portal-btn" onclick="openPortal()">
+  <span class="portal-avatar" id="nav-avatar">?</span>
+  <span id="nav-portal-label">Client Portal</span>
+</div>
+
+<!-- Auth modal -->
+<div class="portal-overlay" id="auth-overlay" onclick="overlayClick(event,'auth-overlay')">
+  <div class="portal-modal">
+    <button class="modal-close" onclick="closeOverlay('auth-overlay')">&times;</button>
+    <div class="modal-title" id="auth-title">Welcome back</div>
+    <div class="modal-sub" id="auth-sub">Sign in to your client account</div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+      <button class="modal-tab" id="tab-register" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <!-- Login form -->
+    <div id="form-login">
+      <input type="email" class="p-input" id="login-email" placeholder="Email address" autocomplete="email">
+      <input type="password" class="p-input" id="login-pass" placeholder="Password" autocomplete="current-password">
+      <p class="p-err" id="login-err"></p>
+      <button class="p-btn" id="login-btn" onclick="doLogin()">Sign In</button>
+    </div>
+
+    <!-- Register form -->
+    <div id="form-register" style="display:none">
+      <input type="text" class="p-input" id="reg-name" placeholder="Display name" autocomplete="name">
+      <input type="email" class="p-input" id="reg-email" placeholder="Email address" autocomplete="email">
+      <input type="password" class="p-input" id="reg-pass" placeholder="Password (min 8 chars)" autocomplete="new-password">
+      <p class="p-err" id="reg-err"></p>
+      <p class="p-ok" id="reg-ok"></p>
+      <button class="p-btn" id="reg-btn" onclick="doRegister()">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- Dashboard modal -->
+<div class="portal-overlay" id="dash-overlay" onclick="overlayClick(event,'dash-overlay')">
+  <div class="portal-modal wide" id="dash-modal">
+    <button class="modal-close" onclick="closeOverlay('dash-overlay')">&times;</button>
+    <div id="dash-content"><!-- filled by JS --></div>
+  </div>
+</div>
+
 <!-- MUSIC BAR -->
 <div id="music-wrap">
   <div id="music-pill" onclick="toggleMusic()">
@@ -551,20 +751,34 @@ footer{border-top:1px solid var(--border);padding:24px 5vw;display:flex;justify-
     <span>Currently Listening</span>
     <i class="fa-solid fa-chevron-up pill-chevron"></i>
   </div>
-
   <div id="music-panel">
-    <iframe
-      style="border-radius:12px"
-      src="https://open.spotify.com/embed/album/22dAgxWXl4mZ8L3O0YPMkA?theme=0"
-      width="100%"
-      height="152"
-      frameborder="0"
-      allowfullscreen=""
-      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-      loading="lazy">
-    </iframe>
+    <div class="mp-art"><div class="mp-disc" id="mp-disc"><div class="mp-dot"></div></div></div>
+    <div class="mp-info">
+      <div class="mp-title" id="mp-title">No Sleep</div>
+      <div class="mp-artist" id="mp-artist">Witt Lowry</div>
+    </div>
+    <div class="mp-controls">
+      <button class="mp-btn" id="mp-prev"><i class="fa-solid fa-backward-step"></i></button>
+      <button class="mp-btn play" id="mp-play"><i class="fa-solid fa-play" id="mp-play-icon"></i></button>
+      <button class="mp-btn" id="mp-next"><i class="fa-solid fa-forward-step"></i></button>
+    </div>
+    <div class="mp-progress">
+      <div class="mp-seek" id="mp-seek">
+        <div class="mp-fill" id="mp-fill"></div>
+        <div class="mp-tdot" id="mp-tdot"></div>
+      </div>
+      <div class="mp-times">
+        <span class="mp-time" id="mp-cur">0:00</span>
+        <span class="mp-time" id="mp-dur">0:00</span>
+      </div>
+    </div>
+    <div class="mp-vol">
+      <button class="mp-btn" id="mp-mute"><i class="fa-solid fa-volume-high" id="mp-vol-icon"></i></button>
+      <input type="range" class="mp-vol-slider" id="mp-vol-range" min="0" max="100" value="70">
+    </div>
   </div>
 </div>
+<audio id="mp-audio" preload="none"></audio>
 
 <script>
 /* ────────────────────────────────────────────────
@@ -856,6 +1070,227 @@ function updVol() {
 function toggleMusic() {
   document.getElementById('music-wrap').classList.toggle('open');
 }
+
+/* ════════════════════════════════════════════════════════════
+   CLIENT PORTAL
+   ════════════════════════════════════════════════════════════ */
+var SUPA_URL  = 'https://ohflzuukcmlzzxedevoh.supabase.co';
+var SUPA_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9oZmx6dXVrY21senp4ZWRldm9oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzNDkxMzMsImV4cCI6MjA5NTkyNTEzM30.JUn2XbRcqcLoxoogEDRyuzEaXZwQQ04mmPX9sgfC8es';
+var _supa = null;
+var portalUser = null;
+var portalProfile = null;
+
+(function() {
+  var s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+  s.onload = function() {
+    _supa = window.supabase.createClient(SUPA_URL, SUPA_ANON);
+    _supa.auth.getSession().then(function(r) {
+      if (r.data.session) { portalUser = r.data.session.user; fetchProfile(); }
+    });
+    _supa.auth.onAuthStateChange(function(ev, session) {
+      if (session) { portalUser = session.user; fetchProfile(); }
+      else { portalUser = null; portalProfile = null; updateNavBtn(null); }
+    });
+  };
+  document.head.appendChild(s);
+})();
+
+function fetchProfile() {
+  _supa.from('profiles').select('*').eq('id', portalUser.id).single().then(function(r) {
+    if (r.data) { portalProfile = r.data; updateNavBtn(r.data); }
+  });
+}
+function updateNavBtn(p) {
+  var lbl = document.getElementById('nav-portal-label');
+  var av  = document.getElementById('nav-avatar');
+  if (p) {
+    lbl.textContent = p.display_name || 'Dashboard';
+    av.textContent  = (p.display_name || 'U').charAt(0).toUpperCase();
+    av.style.background = 'rgba(255,255,255,.2)';
+  } else {
+    lbl.textContent = 'Client Portal';
+    av.textContent  = '?';
+    av.style.background = 'rgba(255,255,255,.07)';
+  }
+}
+function openPortal() {
+  if (portalUser) { openDashboard(); }
+  else { document.getElementById('auth-overlay').classList.add('on'); }
+}
+function closeOverlay(id) { document.getElementById(id).classList.remove('on'); }
+function overlayClick(e, id) { if (e.target.id === id) closeOverlay(id); }
+function switchTab(tab) {
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+  document.getElementById('form-login').style.display    = tab === 'login'    ? '' : 'none';
+  document.getElementById('form-register').style.display = tab === 'register' ? '' : 'none';
+  document.getElementById('auth-title').textContent = tab === 'login' ? 'Welcome back' : 'Create account';
+  document.getElementById('auth-sub').textContent   = tab === 'login' ? 'Sign in to your client account' : 'Join the client portal';
+}
+function esc(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+
+function doLogin() {
+  var email = document.getElementById('login-email').value.trim();
+  var pass  = document.getElementById('login-pass').value;
+  var btn   = document.getElementById('login-btn');
+  var err   = document.getElementById('login-err');
+  if (!email || !pass) { showErr(err, 'Please fill all fields'); return; }
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  _supa.auth.signInWithPassword({ email: email, password: pass }).then(function(r) {
+    if (r.error) { showErr(err, r.error.message); }
+    else { closeOverlay('auth-overlay'); setTimeout(openDashboard, 400); }
+    btn.disabled = false; btn.textContent = 'Sign In';
+  });
+}
+
+function doRegister() {
+  var name  = document.getElementById('reg-name').value.trim();
+  var email = document.getElementById('reg-email').value.trim();
+  var pass  = document.getElementById('reg-pass').value;
+  var btn   = document.getElementById('reg-btn');
+  var err   = document.getElementById('reg-err');
+  var ok    = document.getElementById('reg-ok');
+  if (!name || !email || !pass) { showErr(err, 'Please fill all fields'); return; }
+  if (pass.length < 8) { showErr(err, 'Password must be at least 8 characters'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr(err, 'Invalid email'); return; }
+  btn.disabled = true; btn.textContent = 'Creating account...';
+  _supa.auth.signUp({ email: email, password: pass, options: { data: { display_name: name } } }).then(function(r) {
+    if (r.error) { showErr(err, r.error.message); }
+    else { err.style.display = 'none'; ok.textContent = 'Account created! Check your email to confirm.'; ok.style.display = 'block'; }
+    btn.disabled = false; btn.textContent = 'Create Account';
+  });
+}
+
+function getDiscount(pts) {
+  if (pts >= 1000) return 'Free asset'; if (pts >= 500) return '35% off';
+  if (pts >= 250) return '20% off'; if (pts >= 100) return '10% off'; return 'None yet';
+}
+var TIER_NAMES = { new:'New Client', returning:'Returning', trusted:'Trusted', premium:'Premium', legendary:'Legendary' };
+var TIER_NEXT  = { new:'Returning', returning:'Trusted', trusted:'Premium', premium:'Legendary', legendary:'MAX' };
+var TIER_MAX   = { new:100, returning:250, trusted:500, premium:1000, legendary:9999 };
+var TIER_MIN   = { new:0, returning:100, trusted:250, premium:500, legendary:1000 };
+
+function openDashboard() {
+  if (!portalUser) { openPortal(); return; }
+  document.getElementById('dash-content').innerHTML = '<p style="color:rgba(255,255,255,.35);font-size:.85rem;padding:20px 0">Loading...</p>';
+  document.getElementById('dash-overlay').classList.add('on');
+  if (portalProfile) { renderDashHome(); } else { fetchProfile(); setTimeout(renderDashHome, 700); }
+}
+
+function renderDashHome() {
+  var p = portalProfile;
+  if (!p) return;
+  var pts = p.total_points;
+  var max = TIER_MAX[p.tier] || 9999;
+  var min = TIER_MIN[p.tier] || 0;
+  var prog = p.tier === 'legendary' ? 100 : Math.min(100, Math.round(((pts - min) / (max - min)) * 100));
+
+  document.getElementById('dash-content').innerHTML =
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">' +
+      '<div><div class="modal-title">Hey, ' + esc(p.display_name || 'there') + ' \uD83D\uDC4B</div><div class="modal-sub">Your client dashboard</div></div>' +
+      '<div style="display:flex;align-items:center;gap:10px">' +
+        '<span class="tier-badge tier-' + p.tier + '">' + TIER_NAMES[p.tier] + '</span>' +
+        '<button onclick="doSignOut()" style="background:none;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);font-family:\'DM Mono\',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;padding:6px 12px;border-radius:100px;cursor:pointer">Sign Out</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="dash-grid">' +
+      '<div class="dash-stat"><div class="dash-stat-val">' + pts + '</div><div class="dash-stat-lbl">Total Points</div></div>' +
+      '<div class="dash-stat"><div class="dash-stat-val" id="proj-count">\u2014</div><div class="dash-stat-lbl">Projects</div></div>' +
+      '<div class="dash-stat"><div class="dash-stat-val">' + getDiscount(pts) + '</div><div class="dash-stat-lbl">Discount</div></div>' +
+    '</div>' +
+    '<div class="points-bar-wrap">' +
+      '<div class="points-bar-info"><span class="points-bar-label">Progress to ' + TIER_NEXT[p.tier] + '</span><span class="points-bar-val">' + pts + ' / ' + (p.tier === 'legendary' ? '\u221E' : max) + ' pts</span></div>' +
+      '<div class="points-bar-bg"><div class="points-bar-fill" style="width:' + prog + '%"></div></div>' +
+    '</div>' +
+    '<div style="font-size:.85rem;font-weight:700;margin-bottom:12px">My Projects</div>' +
+    '<div class="proj-list" id="proj-list"><p style="color:rgba(255,255,255,.25);font-size:.82rem">Loading...</p></div>';
+
+  _supa.from('projects').select('*').eq('client_id', portalUser.id).order('created_at',{ascending:false}).then(function(r) {
+    var list = document.getElementById('proj-list');
+    var cnt  = document.getElementById('proj-count');
+    if (!list) return;
+    if (!r.data || !r.data.length) {
+      list.innerHTML = '<p style="color:rgba(255,255,255,.25);font-size:.82rem;padding:12px 0">No projects yet.</p>';
+      if (cnt) cnt.textContent = '0'; return;
+    }
+    if (cnt) cnt.textContent = r.data.length;
+    list.innerHTML = r.data.map(function(pr) {
+      return '<div class="proj-card" onclick="openProject(\'' + pr.id + '\')">' +
+        '<div class="proj-card-head"><span class="proj-card-title">' + esc(pr.title) + '</span><span class="status-pill status-' + pr.status + '">' + pr.status + '</span></div>' +
+        '<div class="proj-card-meta">' + esc(pr.service_type) + ' \u00B7 ' + new Date(pr.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) + '</div>' +
+      '</div>';
+    }).join('');
+  });
+}
+
+function openProject(id) {
+  document.getElementById('dash-content').innerHTML = '<p style="color:rgba(255,255,255,.35);font-size:.85rem">Loading...</p>';
+  Promise.all([
+    _supa.from('projects').select('*').eq('id', id).single(),
+    _supa.from('project_updates').select('*').eq('project_id',id).order('created_at',{ascending:false})
+  ]).then(function(results) {
+    var pr = results[0].data;
+    var ups = results[1].data || [];
+    if (!pr) return;
+    document.getElementById('dash-content').innerHTML =
+      '<button class="back-btn" onclick="renderDashHome()"><i class="fa-solid fa-arrow-left" style="font-size:.6rem"></i> Back</button>' +
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap">' +
+        '<div><div class="modal-title" style="font-size:1.1rem">' + esc(pr.title) + '</div><div class="modal-sub">' + esc(pr.service_type) + '</div></div>' +
+        '<span class="status-pill status-' + pr.status + '" style="font-size:.65rem;padding:5px 12px">' + pr.status + '</span>' +
+      '</div>' +
+      (pr.description ? '<p style="font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:20px">' + esc(pr.description) + '</p>' : '') +
+      '<div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:10px;font-family:\'DM Mono\',monospace">Timeline</div>' +
+      (ups.length ?
+        '<div class="timeline">' + ups.map(function(u,i) {
+          return '<div class="tl-item">' +
+            '<div class="tl-dot-wrap"><div class="tl-dot' + (i===0?' latest':'') + '"></div>' + (i<ups.length-1?'<div class="tl-line"></div>':'') + '</div>' +
+            '<div class="tl-body"><div class="tl-msg">' + esc(u.message) + '</div><div class="tl-date">' + new Date(u.created_at).toLocaleDateString('en-US',{month:'long',day:'numeric'}) + '</div></div>' +
+          '</div>';
+        }).join('') + '</div>'
+        : '<p style="color:rgba(255,255,255,.22);font-size:.82rem">No updates yet.</p>') +
+      (pr.status === 'completed' ? '<div style="margin-top:24px"><div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:10px;font-family:\'DM Mono\',monospace">Leave a Review</div><div id="review-wrap"></div></div>' : '');
+
+    if (pr.status === 'completed') {
+      _supa.from('reviews').select('id').eq('project_id',id).single().then(function(r) {
+        var wrap = document.getElementById('review-wrap');
+        if (!wrap) return;
+        if (r.data) { wrap.innerHTML = '<p style="color:#4ade80;font-family:\'DM Mono\',monospace;font-size:.65rem">✓ Review submitted</p>'; return; }
+        selectedStar = 5;
+        wrap.innerHTML =
+          '<div style="display:flex;gap:6px;margin-bottom:10px">' + [1,2,3,4,5].map(function(n){ return '<span style="font-size:1.3rem;cursor:pointer" onclick="setStar(' + n + ')" id="star-' + n + '">★</span>'; }).join('') + '</div>' +
+          '<textarea class="p-input" id="review-body" rows="3" placeholder="Tell me about your experience..." style="resize:none;min-height:80px"></textarea>' +
+          '<p class="p-err" id="review-err"></p>' +
+          '<button class="p-btn" id="review-btn" onclick="submitReview(\'' + id + '\')" style="margin-top:8px">Submit Review</button>';
+        setStar(5);
+      });
+    }
+  });
+}
+
+var selectedStar = 5;
+function setStar(n) {
+  selectedStar = n;
+  [1,2,3,4,5].forEach(function(i) { var el = document.getElementById('star-'+i); if(el) el.style.opacity = i<=n?'1':'0.25'; });
+}
+function submitReview(projectId) {
+  var body = document.getElementById('review-body');
+  var err  = document.getElementById('review-err');
+  var btn  = document.getElementById('review-btn');
+  if (!body || body.value.trim().length < 10) { showErr(err,'Please write at least 10 characters'); return; }
+  btn.disabled = true; btn.textContent = 'Submitting...';
+  _supa.from('reviews').insert({ project_id:projectId, client_id:portalUser.id, rating:selectedStar, body:body.value.trim() }).then(function(r) {
+    if (r.error) { showErr(err,r.error.message); btn.disabled=false; btn.textContent='Submit Review'; return; }
+    var wrap = document.getElementById('review-wrap');
+    if (wrap) wrap.innerHTML = '<p style="color:#4ade80;font-family:\'DM Mono\',monospace;font-size:.65rem">✓ Review submitted — thank you!</p>';
+  });
+}
+
+function doSignOut() {
+  _supa.auth.signOut().then(function() { closeOverlay('dash-overlay'); });
+}
+
 </script>
 </body>
 </html>
