@@ -1124,6 +1124,10 @@ function renderDashHome() {
   var min = TIER_MIN[p.tier] || 0;
   var prog = p.tier === 'legendary' ? 100 : Math.min(100, Math.round(((pts - min) / (max - min)) * 100));
 
+  var adminTab = p.is_admin
+    ? '<button class="modal-tab" id="tab-admin" onclick="switchDashTab(\'admin\')">Admin Panel</button>'
+    : '';
+
   document.getElementById('dash-content').innerHTML =
     '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">' +
       '<div><div class="modal-title">Hey, ' + esc(p.display_name || 'there') + ' \uD83D\uDC4B</div><div class="modal-sub">Your client dashboard</div></div>' +
@@ -1132,18 +1136,42 @@ function renderDashHome() {
         '<button onclick="doSignOut()" style="background:none;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);font-family:\'DM Mono\',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;padding:6px 12px;border-radius:100px;cursor:pointer">Sign Out</button>' +
       '</div>' +
     '</div>' +
-    '<div class="dash-grid">' +
-      '<div class="dash-stat"><div class="dash-stat-val">' + pts + '</div><div class="dash-stat-lbl">Total Points</div></div>' +
-      '<div class="dash-stat"><div class="dash-stat-val" id="proj-count">\u2014</div><div class="dash-stat-lbl">Projects</div></div>' +
-      '<div class="dash-stat"><div class="dash-stat-val">' + getDiscount(pts) + '</div><div class="dash-stat-lbl">Discount</div></div>' +
-    '</div>' +
-    '<div class="points-bar-wrap">' +
-      '<div class="points-bar-info"><span class="points-bar-label">Progress to ' + TIER_NEXT[p.tier] + '</span><span class="points-bar-val">' + pts + ' / ' + (p.tier === 'legendary' ? '\u221E' : max) + ' pts</span></div>' +
-      '<div class="points-bar-bg"><div class="points-bar-fill" style="width:' + prog + '%"></div></div>' +
-    '</div>' +
-    '<div style="font-size:.85rem;font-weight:700;margin-bottom:12px">My Projects</div>' +
-    '<div class="proj-list" id="proj-list"><p style="color:rgba(255,255,255,.25);font-size:.82rem">Loading...</p></div>';
 
+    '<div class="modal-tabs" style="margin-bottom:20px">' +
+      '<button class="modal-tab active" id="tab-client" onclick="switchDashTab(\'client\')">My Dashboard</button>' +
+      adminTab +
+    '</div>' +
+
+    '<div id="dash-client-view">' +
+      '<div class="dash-grid">' +
+        '<div class="dash-stat"><div class="dash-stat-val">' + pts + '</div><div class="dash-stat-lbl">Total Points</div></div>' +
+        '<div class="dash-stat"><div class="dash-stat-val" id="proj-count">\u2014</div><div class="dash-stat-lbl">Projects</div></div>' +
+        '<div class="dash-stat"><div class="dash-stat-val">' + getDiscount(pts) + '</div><div class="dash-stat-lbl">Discount</div></div>' +
+      '</div>' +
+      '<div class="points-bar-wrap">' +
+        '<div class="points-bar-info"><span class="points-bar-label">Progress to ' + TIER_NEXT[p.tier] + '</span><span class="points-bar-val">' + pts + ' / ' + (p.tier === 'legendary' ? '\u221E' : max) + ' pts</span></div>' +
+        '<div class="points-bar-bg"><div class="points-bar-fill" style="width:' + prog + '%"></div></div>' +
+      '</div>' +
+      '<div style="font-size:.85rem;font-weight:700;margin-bottom:12px">My Projects</div>' +
+      '<div class="proj-list" id="proj-list"><p style="color:rgba(255,255,255,.25);font-size:.82rem">Loading...</p></div>' +
+    '</div>' +
+
+    '<div id="dash-admin-view" style="display:none"></div>';
+
+  loadClientProjects();
+}
+
+function switchDashTab(tab) {
+  document.getElementById('tab-client').classList.toggle('active', tab === 'client');
+  var adminBtn = document.getElementById('tab-admin');
+  if (adminBtn) adminBtn.classList.toggle('active', tab === 'admin');
+  document.getElementById('dash-client-view').style.display = tab === 'client' ? '' : 'none';
+  var adminView = document.getElementById('dash-admin-view');
+  adminView.style.display = tab === 'admin' ? '' : 'none';
+  if (tab === 'admin' && adminView.innerHTML === '') renderAdminPanel();
+}
+
+function loadClientProjects() {
   _supa.from('projects').select('*').eq('client_id', portalUser.id).order('created_at',{ascending:false}).then(function(r) {
     var list = document.getElementById('proj-list');
     var cnt  = document.getElementById('proj-count');
@@ -1161,6 +1189,289 @@ function renderDashHome() {
     }).join('');
   });
 }
+
+/* ── ADMIN PANEL ── */
+function renderAdminPanel() {
+  var v = document.getElementById('dash-admin-view');
+  v.innerHTML =
+    '<div class="modal-tabs" style="margin-bottom:16px">' +
+      '<button class="modal-tab active" id="atab-clients" onclick="switchAdminTab(\'clients\')">Clients</button>' +
+      '<button class="modal-tab" id="atab-projects" onclick="switchAdminTab(\'projects\')">All Projects</button>' +
+      '<button class="modal-tab" id="atab-new" onclick="switchAdminTab(\'new\')">New Project</button>' +
+      '<button class="modal-tab" id="atab-reviews" onclick="switchAdminTab(\'reviews\')">Reviews</button>' +
+    '</div>' +
+    '<div id="admin-tab-content"><p style="color:rgba(255,255,255,.25);font-size:.82rem">Loading...</p></div>';
+  loadAdminClients();
+}
+
+function switchAdminTab(tab) {
+  ['clients','projects','new','reviews'].forEach(function(t) {
+    var el = document.getElementById('atab-' + t);
+    if (el) el.classList.toggle('active', t === tab);
+  });
+  if (tab === 'clients')  loadAdminClients();
+  if (tab === 'projects') loadAdminProjects();
+  if (tab === 'new')      renderNewProjectForm();
+  if (tab === 'reviews')  loadAdminReviews();
+}
+
+/* CLIENTS TAB */
+function loadAdminClients() {
+  var c = document.getElementById('admin-tab-content');
+  c.innerHTML = '<p style="color:rgba(255,255,255,.25);font-size:.82rem">Loading...</p>';
+  _supa.from('profiles').select('*').order('created_at',{ascending:false}).then(function(r) {
+    if (!r.data || !r.data.length) { c.innerHTML = '<p style="color:rgba(255,255,255,.25);font-size:.82rem">No clients yet.</p>'; return; }
+    c.innerHTML =
+      '<div class="proj-list">' +
+      r.data.map(function(cl) {
+        return '<div class="proj-card">' +
+          '<div class="proj-card-head">' +
+            '<span class="proj-card-title">' + esc(cl.display_name || 'Unknown') + '</span>' +
+            '<span class="tier-badge tier-' + cl.tier + '" style="font-size:.55rem;padding:3px 8px">' + (TIER_NAMES[cl.tier]||cl.tier) + '</span>' +
+          '</div>' +
+          '<div class="proj-card-meta" style="display:flex;gap:12px;margin-top:6px">' +
+            '<span>' + cl.total_points + ' pts</span>' +
+            (cl.is_admin ? '<span style="color:#fde68a">Admin</span>' : '') +
+          '</div>' +
+          '<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">' +
+            '<button onclick="adminAddPoints(\'' + cl.id + '\',\'' + esc(cl.display_name||'Unknown') + '\')" style="' + adminBtnStyle() + '">+ Points</button>' +
+            '<button onclick="adminCreateProject(\'' + cl.id + '\',\'' + esc(cl.display_name||'Unknown') + '\')" style="' + adminBtnStyle() + '">+ Project</button>' +
+          '</div>' +
+        '</div>';
+      }).join('') +
+      '</div>';
+  });
+}
+
+/* ALL PROJECTS TAB */
+function loadAdminProjects() {
+  var c = document.getElementById('admin-tab-content');
+  c.innerHTML = '<p style="color:rgba(255,255,255,.25);font-size:.82rem">Loading...</p>';
+  _supa.from('projects').select('*, profiles(display_name)').order('created_at',{ascending:false}).then(function(r) {
+    if (!r.data || !r.data.length) { c.innerHTML = '<p style="color:rgba(255,255,255,.25);font-size:.82rem">No projects yet.</p>'; return; }
+    c.innerHTML =
+      '<div class="proj-list">' +
+      r.data.map(function(pr) {
+        var client = (pr.profiles && pr.profiles.display_name) || 'Unknown';
+        return '<div class="proj-card" onclick="adminOpenProject(\'' + pr.id + '\')">' +
+          '<div class="proj-card-head">' +
+            '<span class="proj-card-title">' + esc(pr.title) + '</span>' +
+            '<span class="status-pill status-' + pr.status + '">' + pr.status + '</span>' +
+          '</div>' +
+          '<div class="proj-card-meta">' + esc(client) + ' \u00B7 ' + esc(pr.service_type) + ' \u00B7 ' + new Date(pr.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) + '</div>' +
+        '</div>';
+      }).join('') +
+      '</div>';
+  });
+}
+
+/* NEW PROJECT FORM */
+function renderNewProjectForm(prefillClientId, prefillClientName) {
+  var c = document.getElementById('admin-tab-content');
+  c.innerHTML =
+    '<div style="display:flex;flex-direction:column;gap:10px;max-width:480px">' +
+      '<div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:4px;font-family:\'DM Mono\',monospace">New Project</div>' +
+      (prefillClientName ? '<div style="font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:4px">Client: <strong style="color:#fff">' + esc(prefillClientName) + '</strong></div>' : '') +
+      '<input class="p-input" id="np-title" placeholder="Project title" style="margin-bottom:0">' +
+      '<textarea class="p-input" id="np-desc" placeholder="Description (optional)" rows="3" style="resize:none;min-height:80px;margin-bottom:0"></textarea>' +
+      '<select class="p-input" id="np-service" style="margin-bottom:0">' +
+        '<option value="map">Full Map Design</option>' +
+        '<option value="3d">3D Models / Assets</option>' +
+        '<option value="ambient">Ambient & Lighting</option>' +
+        '<option value="management">Game Management</option>' +
+        '<option value="other">Other</option>' +
+      '</select>' +
+      '<input class="p-input" id="np-price" placeholder="Price USD (optional — for auto points)" type="number" min="0" style="margin-bottom:0">' +
+      (prefillClientId ? '' :
+        '<input class="p-input" id="np-client-id" placeholder="Client UUID (from profiles table)" style="margin-bottom:0">'
+      ) +
+      '<p class="p-err" id="np-err"></p>' +
+      '<button class="p-btn" onclick="submitNewProject(\'' + (prefillClientId||'') + '\')" style="margin-top:4px">Create Project</button>' +
+    '</div>';
+}
+
+function submitNewProject(prefillClientId) {
+  var title   = document.getElementById('np-title').value.trim();
+  var desc    = document.getElementById('np-desc').value.trim();
+  var service = document.getElementById('np-service').value;
+  var price   = document.getElementById('np-price').value;
+  var err     = document.getElementById('np-err');
+  var clientId = prefillClientId || (document.getElementById('np-client-id') && document.getElementById('np-client-id').value.trim());
+
+  if (!title)    { showErr(err, 'Title is required'); return; }
+  if (!clientId) { showErr(err, 'Client ID is required'); return; }
+
+  var btn = document.querySelector('#admin-tab-content .p-btn');
+  btn.disabled = true; btn.textContent = 'Creating...';
+
+  var payload = { client_id: clientId, title: title, description: desc||null, service_type: service, status: 'pending' };
+  if (price) payload.price_usd = parseFloat(price);
+
+  _supa.from('projects').insert(payload).then(function(r) {
+    if (r.error) { showErr(err, r.error.message); btn.disabled=false; btn.textContent='Create Project'; return; }
+    btn.textContent = '✓ Project Created!';
+    setTimeout(function() { switchAdminTab('projects'); }, 1000);
+  });
+}
+
+/* ADMIN OPEN PROJECT — with status update + timeline */
+function adminOpenProject(id) {
+  var c = document.getElementById('admin-tab-content');
+  c.innerHTML = '<p style="color:rgba(255,255,255,.25);font-size:.82rem">Loading...</p>';
+  Promise.all([
+    _supa.from('projects').select('*, profiles(display_name)').eq('id',id).single(),
+    _supa.from('project_updates').select('*').eq('project_id',id).order('created_at',{ascending:false})
+  ]).then(function(res) {
+    var pr  = res[0].data;
+    var ups = res[1].data || [];
+    if (!pr) return;
+    var client = (pr.profiles && pr.profiles.display_name) || 'Unknown';
+
+    c.innerHTML =
+      '<button class="back-btn" onclick="loadAdminProjects()"><i class="fa-solid fa-arrow-left" style="font-size:.6rem"></i> Back</button>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap">' +
+        '<div><div class="modal-title" style="font-size:1.05rem">' + esc(pr.title) + '</div>' +
+        '<div class="modal-sub">Client: ' + esc(client) + ' \u00B7 ' + esc(pr.service_type) + '</div></div>' +
+        '<span class="status-pill status-' + pr.status + '" style="font-size:.65rem;padding:5px 12px">' + pr.status + '</span>' +
+      '</div>' +
+
+      /* Status update */
+      '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px;margin-bottom:16px">' +
+        '<div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:10px;font-family:\'DM Mono\',monospace">Update Status & Add Timeline Entry</div>' +
+        '<select class="p-input" id="ap-status" style="margin-bottom:10px">' +
+          ['pending','active','review','completed'].map(function(s) {
+            return '<option value="' + s + '"' + (s===pr.status?' selected':'') + '>' + s.charAt(0).toUpperCase()+s.slice(1) + '</option>';
+          }).join('') +
+        '</select>' +
+        '<input class="p-input" id="ap-msg" placeholder="Timeline message (e.g. Map blockout completed)" style="margin-bottom:10px">' +
+        '<p class="p-err" id="ap-err"></p>' +
+        '<button class="p-btn" onclick="adminUpdateProject(\'' + pr.id + '\',\'' + pr.client_id + '\')" style="margin-top:0">Save Update</button>' +
+      '</div>' +
+
+      /* Timeline */
+      '<div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:10px;font-family:\'DM Mono\',monospace">Timeline</div>' +
+      (ups.length ?
+        '<div class="timeline">' + ups.map(function(u,i) {
+          return '<div class="tl-item">' +
+            '<div class="tl-dot-wrap"><div class="tl-dot' + (i===0?' latest':'') + '"></div>' + (i<ups.length-1?'<div class="tl-line"></div>':'') + '</div>' +
+            '<div class="tl-body"><div class="tl-msg">' + esc(u.message) + '</div><div class="tl-date">' + new Date(u.created_at).toLocaleDateString('en-US',{month:'long',day:'numeric'}) + '</div></div>' +
+          '</div>';
+        }).join('') + '</div>'
+        : '<p style="color:rgba(255,255,255,.22);font-size:.82rem">No updates yet.</p>');
+  });
+}
+
+function adminUpdateProject(projectId, clientId) {
+  var status = document.getElementById('ap-status').value;
+  var msg    = document.getElementById('ap-msg').value.trim();
+  var err    = document.getElementById('ap-err');
+  var btn    = document.querySelector('#admin-tab-content .p-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  var updates = [
+    _supa.from('projects').update({ status: status, ...(status==='completed'?{completed_at:new Date().toISOString()}:{}) }).eq('id', projectId)
+  ];
+  if (msg) {
+    updates.push(_supa.from('project_updates').insert({ project_id: projectId, message: msg, status_change: status }));
+  }
+  if (status === 'completed') {
+    _supa.from('projects').select('price_usd').eq('id', projectId).single().then(function(r) {
+      if (r.data && r.data.price_usd) {
+        var pts = Math.floor(r.data.price_usd);
+        _supa.rpc('award_points', { p_client_id: clientId, p_delta: pts, p_reason: 'commission', p_project_id: projectId });
+      }
+    });
+  }
+
+  Promise.all(updates).then(function(results) {
+    var hasErr = results.find(function(r) { return r.error; });
+    if (hasErr) { showErr(err, hasErr.error.message); btn.disabled=false; btn.textContent='Save Update'; return; }
+    btn.textContent = '✓ Saved!';
+    setTimeout(function() { adminOpenProject(projectId); }, 800);
+  });
+}
+
+/* ADD POINTS MODAL */
+function adminAddPoints(clientId, clientName) {
+  var c = document.getElementById('admin-tab-content');
+  c.innerHTML =
+    '<button class="back-btn" onclick="loadAdminClients()"><i class="fa-solid fa-arrow-left" style="font-size:.6rem"></i> Back</button>' +
+    '<div style="max-width:400px">' +
+      '<div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:6px;font-family:\'DM Mono\',monospace">Adjust Points</div>' +
+      '<div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:16px">Client: <strong style="color:#fff">' + esc(clientName) + '</strong></div>' +
+      '<input class="p-input" id="apts-delta" type="number" placeholder="Points (negative to deduct)" style="margin-bottom:10px">' +
+      '<select class="p-input" id="apts-reason" style="margin-bottom:10px">' +
+        '<option value="bonus">Bonus</option>' +
+        '<option value="manual">Manual adjustment</option>' +
+        '<option value="redeem">Redeem discount</option>' +
+      '</select>' +
+      '<p class="p-err" id="apts-err"></p>' +
+      '<button class="p-btn" onclick="submitAdminPoints(\'' + clientId + '\')">Apply Points</button>' +
+    '</div>';
+}
+
+function submitAdminPoints(clientId) {
+  var delta  = parseInt(document.getElementById('apts-delta').value);
+  var reason = document.getElementById('apts-reason').value;
+  var err    = document.getElementById('apts-err');
+  var btn    = document.querySelector('#admin-tab-content .p-btn');
+  if (isNaN(delta) || delta === 0) { showErr(err, 'Enter a valid number'); return; }
+  btn.disabled = true; btn.textContent = 'Applying...';
+  _supa.rpc('award_points', { p_client_id: clientId, p_delta: delta, p_reason: reason }).then(function(r) {
+    if (r.error) { showErr(err, r.error.message); btn.disabled=false; btn.textContent='Apply Points'; return; }
+    btn.textContent = '✓ Done!';
+    setTimeout(loadAdminClients, 800);
+  });
+}
+
+/* SHORTCUT from client card */
+function adminCreateProject(clientId, clientName) {
+  switchAdminTab('new');
+  setTimeout(function() { renderNewProjectForm(clientId, clientName); }, 50);
+}
+
+/* REVIEWS TAB */
+function loadAdminReviews() {
+  var c = document.getElementById('admin-tab-content');
+  c.innerHTML = '<p style="color:rgba(255,255,255,.25);font-size:.82rem">Loading...</p>';
+  _supa.from('reviews').select('*, profiles(display_name), projects(title)').order('created_at',{ascending:false}).then(function(r) {
+    if (!r.data || !r.data.length) { c.innerHTML = '<p style="color:rgba(255,255,255,.25);font-size:.82rem">No reviews yet.</p>'; return; }
+    c.innerHTML =
+      '<div class="proj-list">' +
+      r.data.map(function(rv) {
+        var stars = '\u2605'.repeat(rv.rating) + '\u2606'.repeat(5-rv.rating);
+        var projTitle = (rv.projects && rv.projects.title) || 'Unknown project';
+        var clientName = (rv.profiles && rv.profiles.display_name) || 'Unknown';
+        return '<div class="proj-card">' +
+          '<div class="proj-card-head">' +
+            '<span style="font-size:.9rem">' + stars + '</span>' +
+            '<span class="status-pill ' + (rv.approved?'status-completed':'status-pending') + '">' + (rv.approved?'Approved':'Pending') + '</span>' +
+          '</div>' +
+          '<div style="font-size:.82rem;color:rgba(255,255,255,.6);font-style:italic;margin:6px 0">"' + esc(rv.body) + '"</div>' +
+          '<div class="proj-card-meta">' + esc(clientName) + ' \u00B7 ' + esc(projTitle) + '</div>' +
+          (!rv.approved ?
+            '<button onclick="approveReview(\'' + rv.id + '\')" style="' + adminBtnStyle('green') + ';margin-top:8px">Approve & Publish</button>' :
+            '<button onclick="unapproveReview(\'' + rv.id + '\')" style="' + adminBtnStyle() + ';margin-top:8px">Unpublish</button>'
+          ) +
+        '</div>';
+      }).join('') +
+      '</div>';
+  });
+}
+
+function approveReview(id) {
+  _supa.from('reviews').update({ approved: true }).eq('id', id).then(function() { loadAdminReviews(); });
+}
+function unapproveReview(id) {
+  _supa.from('reviews').update({ approved: false }).eq('id', id).then(function() { loadAdminReviews(); });
+}
+
+function adminBtnStyle(color) {
+  var base = 'background:none;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.55);font-family:\'DM Mono\',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;padding:5px 12px;border-radius:100px;cursor:pointer;transition:all .2s';
+  if (color === 'green') return base.replace('rgba(255,255,255,.12)','rgba(74,222,128,.3)').replace('rgba(255,255,255,.55)','#86efac');
+  return base;
+}
+
 
 function openProject(id) {
   document.getElementById('dash-content').innerHTML = '<p style="color:rgba(255,255,255,.35);font-size:.85rem">Loading...</p>';
