@@ -288,31 +288,136 @@ footer{border-top:1px solid var(--border);padding:24px 5vw;display:flex;justify-
 .reveal.in{opacity:1;transform:translateY(0)}
 
 /* RESPONSIVE */
+/* ── HOW IT WORKS ── */
+#how-it-works{padding:80px 5vw;border-top:1px solid var(--border)}
+.hiw-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+}
+.hiw-card{
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:16px;
+  padding:24px 20px;
+  display:flex;flex-direction:column;gap:10px;
+  transition:border-color .25s,background .25s;
+  position:relative;overflow:hidden;
+}
+.hiw-card:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.05)}
+.hiw-card-accent{
+  border-color:rgba(255,255,255,.12);
+  background:rgba(255,255,255,.04);
+}
+.hiw-card-accent:hover{border-color:rgba(255,255,255,.25)}
+.hiw-card-accent::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,rgba(255,255,255,.2),transparent);
+}
+.hiw-num{
+  font-family:'DM Mono',monospace;font-size:.65rem;
+  color:rgba(255,255,255,.2);letter-spacing:.1em;
+  font-weight:700;
+}
+.hiw-icon{font-size:1.1rem;color:rgba(255,255,255,.4);margin-bottom:2px}
+.hiw-card-accent .hiw-icon{color:rgba(255,255,255,.7)}
+.hiw-title{font-size:.88rem;font-weight:700;line-height:1.3;color:#fff}
+.hiw-body{font-size:.78rem;line-height:1.7;color:rgba(255,255,255,.42);flex:1}
+.hiw-cta{
+  margin-top:6px;padding:10px 16px;border-radius:100px;
+  background:#fff;color:#000;border:none;
+  font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;cursor:pointer;
+  transition:opacity .2s,transform .15s;align-self:flex-start;
+}
+.hiw-cta:hover{opacity:.88;transform:translateY(-1px)}
+
 @media(max-width:900px){
   nav{width:calc(100% - 32px);padding:0 16px}
   .nav-links,.nav-cta{display:none}
   .burger{display:flex}
+  /* hero */
   #home{grid-template-columns:1fr;padding:100px 5vw 0;min-height:auto;gap:32px}
   .hero-right{padding-bottom:0}
   .hero-main-card{height:260px}
+  /* stats */
   .stats-row{grid-template-columns:repeat(3,1fr)}
   .stat:nth-child(3){border-right:none}
+  .stat:nth-child(4),.stat:nth-child(5){border-top:1px solid var(--border)}
+  /* work */
+  .pcard{width:260px;height:170px}
+  /* games */
   .games-bento{grid-template-columns:1fr 1fr;grid-template-rows:auto}
   .game-card.trending{grid-column:1/3;grid-row:auto}
   .game-card.trending .game-thumb{height:55%;min-height:160px}
+  /* testimonials */
   .testi-grid{grid-template-columns:1fr}
-  .rating-card{grid-column:1}
+  .rating-card{grid-column:1;flex-direction:column}
+  .rating-pills{flex-direction:column}
+  /* how it works */
+  .hiw-grid{grid-template-columns:1fr 1fr}
+  .hiw-card-accent{grid-column:1/3}
+  /* about / contact */
   #about{grid-template-columns:1fr;padding:80px 5vw;gap:48px}
   #contact{grid-template-columns:1fr;padding:80px 5vw;gap:48px}
   .form-row{grid-template-columns:1fr}
-  footer{flex-direction:column;gap:16px;text-align:center}
-  .pcard{width:260px;height:170px}
+  /* footer */
+  footer{flex-direction:column;gap:16px;text-align:center;margin-bottom:100px}
+  .foot-links{flex-wrap:wrap;justify-content:center}
+  /* sec-head */
+  .sec-head{flex-direction:column;gap:12px;align-items:flex-start}
+  .sec-note{max-width:100%}
+  /* portal btn */
+  #portal-btn{top:10px;right:10px;padding:6px 12px}
 }
-@media(max-width:500px){
-  .hero-name{font-size:clamp(2.8rem,14vw,4rem)}
-  .hero-thumb{height:60px}
+
+/* iPad portrait ~768px */
+@media(max-width:768px){
   .stats-row{grid-template-columns:repeat(2,1fr)}
   .stat:nth-child(2){border-right:none}
+  .stat:nth-child(3){border-top:1px solid var(--border);border-right:1px solid var(--border)}
+  .stat:nth-child(4){border-top:1px solid var(--border)}
+  .stat:nth-child(5){border-top:1px solid var(--border);border-right:none}
+  .dash-grid{grid-template-columns:1fr 1fr}
+  .portal-modal.wide{max-width:100%}
+  .testi-grid{grid-template-columns:1fr}
+  .rating-card{grid-column:1}
+}
+
+/* Mobile ~500px */
+@media(max-width:500px){
+  .hero-name{font-size:clamp(2.8rem,14vw,4rem)}
+  .hero-thumbs{grid-template-columns:repeat(4,1fr)}
+  .hero-thumb{height:60px}
+  .hero-main-card{height:220px}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .stat{padding:18px 5vw}
+  .hiw-grid{grid-template-columns:1fr}
+  .hiw-card-accent{grid-column:1}
+  #work{padding:60px 0 40px}
+  #games,#testimonials,#about,#contact,#how-it-works{padding:60px 5vw}
+  .sec-title{font-size:clamp(1.8rem,10vw,3rem)}
+  .about-title{font-size:clamp(1.8rem,10vw,3rem)}
+  .contact-title{font-size:clamp(1.8rem,10vw,3rem)}
+  .pay-grid{grid-template-columns:1fr 1fr}
+  .games-bento{grid-template-columns:1fr}
+  .game-card.trending{grid-column:1}
+  .music-wrap{bottom:12px}
+  footer{padding:20px 5vw;margin-bottom:90px}
+  /* portal modal full screen on mobile */
+  .portal-overlay{padding:0;align-items:flex-end}
+  .portal-modal{border-radius:20px 20px 0 0;max-width:100%;max-height:90vh;overflow-y:auto}
+  .portal-modal.wide{max-height:92vh;overflow-y:auto}
+  #music-wrap{width:calc(100vw - 24px)}
+  .dash-grid{grid-template-columns:1fr 1fr}
+  nav{width:calc(100% - 24px);padding:0 14px;height:48px}
+}
+
+/* Very small screens */
+@media(max-width:380px){
+  .hero-name{font-size:clamp(2.4rem,13vw,3.2rem)}
+  .dash-grid{grid-template-columns:1fr}
+  .hiw-grid{grid-template-columns:1fr}
 }
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:#000}
@@ -332,6 +437,7 @@ footer{border-top:1px solid var(--border);padding:24px 5vw;display:flex;justify-
     <a href="#home">Home</a>
     <a href="#work">Work</a>
     <a href="#games">Games</a>
+    <a href="#how-it-works">How It Works</a>
     <a href="#about">About</a>
     <a href="#contact">Contact</a>
   </div>
@@ -342,6 +448,7 @@ footer{border-top:1px solid var(--border);padding:24px 5vw;display:flex;justify-
   <a href="#home" onclick="toggleMob()">Home</a>
   <a href="#work" onclick="toggleMob()">Work</a>
   <a href="#games" onclick="toggleMob()">Games</a>
+  <a href="#how-it-works" onclick="toggleMob()">How It Works</a>
   <a href="#about" onclick="toggleMob()">About</a>
   <a href="#contact" onclick="toggleMob()">Contact</a>
 </div>
@@ -502,6 +609,56 @@ footer{border-top:1px solid var(--border);padding:24px 5vw;display:flex;justify-
     <div class="pay-grid">
       <div class="pay-card"><div class="pay-icon"><i class="fa-brands fa-bitcoin"></i></div><div class="pay-name">CRYPTO</div><div class="pay-sub">BTC · ETH · USDT</div></div>
       <div class="pay-card"><div class="pay-icon"><i class="fa-solid fa-coins"></i></div><div class="pay-name">ROBUX</div><div class="pay-sub">Group Funds · Gamepasses</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+  <div class="sec-head reveal">
+    <div>
+      <p class="sec-eyebrow">The Process</p>
+      <h2 class="sec-title">HOW IT<br>WORKS</h2>
+    </div>
+    <p class="sec-note">From first message to delivered project — simple and transparent.</p>
+  </div>
+
+  <div class="hiw-grid reveal">
+    <!-- Step 1 -->
+    <div class="hiw-card">
+      <div class="hiw-num">01</div>
+      <div class="hiw-icon"><i class="fa-solid fa-comment"></i></div>
+      <div class="hiw-title">Tell me about your project</div>
+      <div class="hiw-body">Fill out the contact form or reach me on Discord. Describe what you need — map style, 3D assets, lighting — and I'll get back to you fast.</div>
+    </div>
+    <!-- Step 2 -->
+    <div class="hiw-card">
+      <div class="hiw-num">02</div>
+      <div class="hiw-icon"><i class="fa-solid fa-handshake"></i></div>
+      <div class="hiw-title">We align on scope & price</div>
+      <div class="hiw-body">I'll send a clear quote with timeline. I accept USD via PayPal, Robux, or Crypto. Once agreed, I start immediately.</div>
+    </div>
+    <!-- Step 3 -->
+    <div class="hiw-card">
+      <div class="hiw-num">03</div>
+      <div class="hiw-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+      <div class="hiw-title">I build. You track progress.</div>
+      <div class="hiw-body">Client portal members get a live timeline — "Map blockout done", "Assets integrated", "Optimization pass started". You always know where things stand.</div>
+    </div>
+    <!-- Step 4 -->
+    <div class="hiw-card">
+      <div class="hiw-num">04</div>
+      <div class="hiw-icon"><i class="fa-solid fa-box-open"></i></div>
+      <div class="hiw-title">Delivery & review</div>
+      <div class="hiw-body">You get the files, review the work, and leave feedback. Revisions are part of the process — I don't close the project until you're happy.</div>
+    </div>
+    <!-- Step 5 — portal CTA -->
+    <div class="hiw-card hiw-card-accent">
+      <div class="hiw-num">+</div>
+      <div class="hiw-icon"><i class="fa-solid fa-star"></i></div>
+      <div class="hiw-title">Earn points on every commission</div>
+      <div class="hiw-body">Create a free client account to track your projects, earn loyalty points ($1 = 1 pt), and unlock discounts — up to 35% off or a free asset at 1000 pts.</div>
+      <button onclick="openPortal()" class="hiw-cta">Create Free Account</button>
     </div>
   </div>
 </section>
@@ -1120,13 +1277,27 @@ function renderDashHome() {
   var p = portalProfile;
   if (!p) return;
   var pts = p.total_points;
-  var max = TIER_MAX[p.tier] || 9999;
-  var min = TIER_MIN[p.tier] || 0;
-  var prog = p.tier === 'legendary' ? 100 : Math.min(100, Math.round(((pts - min) / (max - min)) * 100));
 
   var adminTab = p.is_admin
     ? '<button class="modal-tab" id="tab-admin" onclick="switchDashTab(\'admin\')">Admin Panel</button>'
     : '';
+
+  /* Points explainer rows */
+  var rewardRows = [
+    { pts: 100,  label: '10% discount on next commission' },
+    { pts: 250,  label: '20% discount on next commission' },
+    { pts: 500,  label: '35% discount on next commission' },
+    { pts: 1000, label: 'Free small commission or bonus asset' },
+  ].map(function(r) {
+    var reached = pts >= r.pts;
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">' +
+      '<div style="display:flex;align-items:center;gap:10px">' +
+        '<span style="font-size:.75rem;' + (reached ? 'color:#4ade80' : 'color:rgba(255,255,255,.25)') + '">' + (reached ? '✓' : '○') + '</span>' +
+        '<span style="font-size:.82rem;color:' + (reached ? '#fff' : 'rgba(255,255,255,.4)') + '">' + r.label + '</span>' +
+      '</div>' +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:.6rem;color:' + (reached ? '#4ade80' : 'rgba(255,255,255,.25)') + '">' + r.pts + ' pts' + (reached ? ' ✓' : '') + '</span>' +
+    '</div>';
+  }).join('');
 
   document.getElementById('dash-content').innerHTML =
     '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">' +
@@ -1143,15 +1314,24 @@ function renderDashHome() {
     '</div>' +
 
     '<div id="dash-client-view">' +
-      '<div class="dash-grid">' +
-        '<div class="dash-stat"><div class="dash-stat-val">' + pts + '</div><div class="dash-stat-lbl">Total Points</div></div>' +
+      /* Stats */
+      '<div class="dash-grid" style="margin-bottom:20px">' +
+        '<div class="dash-stat"><div class="dash-stat-val">' + pts + '</div><div class="dash-stat-lbl">Your Points</div></div>' +
         '<div class="dash-stat"><div class="dash-stat-val" id="proj-count">\u2014</div><div class="dash-stat-lbl">Projects</div></div>' +
-        '<div class="dash-stat"><div class="dash-stat-val">' + getDiscount(pts) + '</div><div class="dash-stat-lbl">Discount</div></div>' +
+        '<div class="dash-stat"><div class="dash-stat-val">' + getDiscount(pts) + '</div><div class="dash-stat-lbl">Current Discount</div></div>' +
       '</div>' +
-      '<div class="points-bar-wrap">' +
-        '<div class="points-bar-info"><span class="points-bar-label">Progress to ' + TIER_NEXT[p.tier] + '</span><span class="points-bar-val">' + pts + ' / ' + (p.tier === 'legendary' ? '\u221E' : max) + ' pts</span></div>' +
-        '<div class="points-bar-bg"><div class="points-bar-fill" style="width:' + prog + '%"></div></div>' +
+
+      /* Points explainer */
+      '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px 18px;margin-bottom:20px">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">' +
+          '<div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);font-family:\'DM Mono\',monospace">How Points Work</div>' +
+          '<span style="font-family:\'DM Mono\',monospace;font-size:.62rem;color:rgba(255,255,255,.35)">$1 spent = 1 point</span>' +
+        '</div>' +
+        rewardRows +
+        '<div style="margin-top:12px;font-size:.75rem;color:rgba(255,255,255,.3);line-height:1.6">Points are awarded automatically when your commission is marked as completed. To redeem a discount, mention it when placing your next order — your developer will apply it manually.</div>' +
       '</div>' +
+
+      /* Projects */
       '<div style="font-size:.85rem;font-weight:700;margin-bottom:12px">My Projects</div>' +
       '<div class="proj-list" id="proj-list"><p style="color:rgba(255,255,255,.25);font-size:.82rem">Loading...</p></div>' +
     '</div>' +
@@ -1168,6 +1348,7 @@ function switchDashTab(tab) {
   document.getElementById('dash-client-view').style.display = tab === 'client' ? '' : 'none';
   var adminView = document.getElementById('dash-admin-view');
   adminView.style.display = tab === 'admin' ? '' : 'none';
+
   if (tab === 'admin' && adminView.innerHTML === '') renderAdminPanel();
 }
 
@@ -1195,7 +1376,7 @@ function renderAdminPanel() {
   var v = document.getElementById('dash-admin-view');
   v.innerHTML =
     '<div class="modal-tabs" style="margin-bottom:16px">' +
-      '<button class="modal-tab active" id="atab-clients" onclick="switchAdminTab(\'clients\')">Clients</button>' +
+      '<button class="modal-tab active" id="atab-clients" onclick="switchAdminTab(\'clients\')">Clients & Points</button>' +
       '<button class="modal-tab" id="atab-projects" onclick="switchAdminTab(\'projects\')">All Projects</button>' +
       '<button class="modal-tab" id="atab-new" onclick="switchAdminTab(\'new\')">New Project</button>' +
       '<button class="modal-tab" id="atab-reviews" onclick="switchAdminTab(\'reviews\')">Reviews</button>' +
@@ -1215,31 +1396,114 @@ function switchAdminTab(tab) {
   if (tab === 'reviews')  loadAdminReviews();
 }
 
-/* CLIENTS TAB */
+/* CLIENTS & POINTS TAB */
 function loadAdminClients() {
   var c = document.getElementById('admin-tab-content');
   c.innerHTML = '<p style="color:rgba(255,255,255,.25);font-size:.82rem">Loading...</p>';
-  _supa.from('profiles').select('*').order('created_at',{ascending:false}).then(function(r) {
+  _supa.from('profiles').select('*').order('total_points',{ascending:false}).then(function(r) {
     if (!r.data || !r.data.length) { c.innerHTML = '<p style="color:rgba(255,255,255,.25);font-size:.82rem">No clients yet.</p>'; return; }
     c.innerHTML =
+      '<div style="font-size:.7rem;color:rgba(255,255,255,.3);font-family:\'DM Mono\',monospace;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px">' + r.data.length + ' clients — sorted by points</div>' +
       '<div class="proj-list">' +
       r.data.map(function(cl) {
+        var discount = getDiscount(cl.total_points);
         return '<div class="proj-card">' +
-          '<div class="proj-card-head">' +
-            '<span class="proj-card-title">' + esc(cl.display_name || 'Unknown') + '</span>' +
+          '<div class="proj-card-head" style="margin-bottom:8px">' +
+            '<div style="display:flex;align-items:center;gap:8px">' +
+              '<span class="proj-card-title">' + esc(cl.display_name || 'Unknown') + '</span>' +
+              (cl.is_admin ? '<span style="font-family:\'DM Mono\',monospace;font-size:.55rem;color:#fde68a;background:rgba(234,179,8,.1);padding:2px 6px;border-radius:4px">ADMIN</span>' : '') +
+            '</div>' +
             '<span class="tier-badge tier-' + cl.tier + '" style="font-size:.55rem;padding:3px 8px">' + (TIER_NAMES[cl.tier]||cl.tier) + '</span>' +
           '</div>' +
-          '<div class="proj-card-meta" style="display:flex;gap:12px;margin-top:6px">' +
-            '<span>' + cl.total_points + ' pts</span>' +
-            (cl.is_admin ? '<span style="color:#fde68a">Admin</span>' : '') +
+          '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:10px">' +
+            '<div style="display:flex;flex-direction:column;gap:2px">' +
+              '<span style="font-size:1.2rem;font-weight:800;letter-spacing:-.02em">' + cl.total_points + '</span>' +
+              '<span style="font-family:\'DM Mono\',monospace;font-size:.55rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em">points</span>' +
+            '</div>' +
+            '<div style="text-align:right">' +
+              '<div style="font-size:.75rem;font-weight:600;color:' + (discount!=='None yet'?'#4ade80':'rgba(255,255,255,.3)') + '">' + discount + '</div>' +
+              '<div style="font-family:\'DM Mono\',monospace;font-size:.55rem;color:rgba(255,255,255,.25)">current discount</div>' +
+            '</div>' +
           '</div>' +
-          '<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">' +
-            '<button onclick="adminAddPoints(\'' + cl.id + '\',\'' + esc(cl.display_name||'Unknown') + '\')" style="' + adminBtnStyle() + '">+ Points</button>' +
+          '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+            '<button onclick="showAwardPoints(\'' + cl.id + '\',\'' + esc(cl.display_name||'Unknown') + '\')" style="' + adminBtnStyle('green') + '">+ Award Points</button>' +
+            '<button onclick="showRedeemPoints(\'' + cl.id + '\',\'' + esc(cl.display_name||'Unknown') + '\',' + cl.total_points + ')" style="' + adminBtnStyle('amber') + '">− Redeem Discount</button>' +
             '<button onclick="adminCreateProject(\'' + cl.id + '\',\'' + esc(cl.display_name||'Unknown') + '\')" style="' + adminBtnStyle() + '">+ Project</button>' +
           '</div>' +
+          '<div id="action-' + cl.id + '" style="display:none;margin-top:12px"></div>' +
         '</div>';
       }).join('') +
       '</div>';
+  });
+}
+
+/* AWARD POINTS inline */
+function showAwardPoints(clientId, clientName) {
+  document.querySelectorAll('[id^="action-"]').forEach(function(el) { el.style.display='none'; el.innerHTML=''; });
+  var area = document.getElementById('action-' + clientId);
+  area.style.display = 'block';
+  area.innerHTML =
+    '<div style="background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);border-radius:10px;padding:14px">' +
+      '<div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4ade80;font-family:\'DM Mono\',monospace;margin-bottom:10px">Award Points — ' + esc(clientName) + '</div>' +
+      '<div style="display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap">' +
+        '<input class="p-input" id="award-amt-' + clientId + '" type="number" placeholder="e.g. 25 (for $25 commission)" min="1" style="margin-bottom:0;flex:1;min-width:160px">' +
+        '<button onclick="submitAwardPoints(\'' + clientId + '\')" style="' + adminBtnStyle('green') + ';padding:13px 16px">Award</button>' +
+        '<button onclick="document.getElementById(\'action-' + clientId + '\').style.display=\'none\'" style="' + adminBtnStyle() + ';padding:13px 16px">Cancel</button>' +
+      '</div>' +
+      '<p style="font-family:\'DM Mono\',monospace;font-size:.58rem;color:rgba(255,255,255,.3);margin-top:8px">Enter commission amount in USD — $1 = 1 point.</p>' +
+      '<p class="p-err" id="award-err-' + clientId + '"></p>' +
+    '</div>';
+}
+
+function submitAwardPoints(clientId) {
+  var input = document.getElementById('award-amt-' + clientId);
+  var err   = document.getElementById('award-err-' + clientId);
+  var delta = parseInt(input.value);
+  if (isNaN(delta) || delta <= 0) { showErr(err, 'Enter a valid amount'); return; }
+  input.disabled = true;
+  _supa.rpc('award_points', { p_client_id: clientId, p_delta: delta, p_reason: 'commission' }).then(function(r) {
+    if (r.error) { showErr(err, r.error.message); input.disabled=false; return; }
+    loadAdminClients();
+  });
+}
+
+/* REDEEM DISCOUNT inline */
+function showRedeemPoints(clientId, clientName, currentPts) {
+  document.querySelectorAll('[id^="action-"]').forEach(function(el) { el.style.display='none'; el.innerHTML=''; });
+  var area = document.getElementById('action-' + clientId);
+  area.style.display = 'block';
+  var tiers = [
+    { pts:100,  label:'10% discount — costs 100 pts' },
+    { pts:250,  label:'20% discount — costs 250 pts' },
+    { pts:500,  label:'35% discount — costs 500 pts' },
+    { pts:1000, label:'Free commission — costs 1000 pts' },
+  ].filter(function(t) { return currentPts >= t.pts; });
+  var options = tiers.length
+    ? tiers.map(function(t) { return '<option value="' + t.pts + '">' + t.label + '</option>'; }).join('')
+    : '<option disabled selected>Not enough points for any discount</option>';
+  area.innerHTML =
+    '<div style="background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:14px">' +
+      '<div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#fbbf24;font-family:\'DM Mono\',monospace;margin-bottom:10px">Redeem Discount — ' + esc(clientName) + '</div>' +
+      '<div style="font-family:\'DM Mono\',monospace;font-size:.65rem;color:rgba(255,255,255,.4);margin-bottom:10px">Balance: <strong style="color:#fff">' + currentPts + ' pts</strong></div>' +
+      '<div style="display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap">' +
+        '<select class="p-input" id="redeem-sel-' + clientId + '" style="margin-bottom:0;flex:1">' + options + '</select>' +
+        (tiers.length ? '<button onclick="submitRedeemPoints(\'' + clientId + '\')" style="' + adminBtnStyle('amber') + ';padding:13px 16px">Redeem</button>' : '') +
+        '<button onclick="document.getElementById(\'action-' + clientId + '\').style.display=\'none\'" style="' + adminBtnStyle() + ';padding:13px 16px">Cancel</button>' +
+      '</div>' +
+      '<p style="font-family:\'DM Mono\',monospace;font-size:.58rem;color:rgba(255,255,255,.3);margin-top:8px">Points will be deducted from the client balance.</p>' +
+      '<p class="p-err" id="redeem-err-' + clientId + '"></p>' +
+    '</div>';
+}
+
+function submitRedeemPoints(clientId) {
+  var sel   = document.getElementById('redeem-sel-' + clientId);
+  var err   = document.getElementById('redeem-err-' + clientId);
+  var pts   = parseInt(sel.value);
+  if (isNaN(pts) || pts <= 0) { showErr(err, 'Select a valid discount'); return; }
+  sel.disabled = true;
+  _supa.rpc('award_points', { p_client_id: clientId, p_delta: -pts, p_reason: 'redeem' }).then(function(r) {
+    if (r.error) { showErr(err, r.error.message); sel.disabled=false; return; }
+    loadAdminClients();
   });
 }
 
@@ -1391,39 +1655,6 @@ function adminUpdateProject(projectId, clientId) {
   });
 }
 
-/* ADD POINTS MODAL */
-function adminAddPoints(clientId, clientName) {
-  var c = document.getElementById('admin-tab-content');
-  c.innerHTML =
-    '<button class="back-btn" onclick="loadAdminClients()"><i class="fa-solid fa-arrow-left" style="font-size:.6rem"></i> Back</button>' +
-    '<div style="max-width:400px">' +
-      '<div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:6px;font-family:\'DM Mono\',monospace">Adjust Points</div>' +
-      '<div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:16px">Client: <strong style="color:#fff">' + esc(clientName) + '</strong></div>' +
-      '<input class="p-input" id="apts-delta" type="number" placeholder="Points (negative to deduct)" style="margin-bottom:10px">' +
-      '<select class="p-input" id="apts-reason" style="margin-bottom:10px">' +
-        '<option value="bonus">Bonus</option>' +
-        '<option value="manual">Manual adjustment</option>' +
-        '<option value="redeem">Redeem discount</option>' +
-      '</select>' +
-      '<p class="p-err" id="apts-err"></p>' +
-      '<button class="p-btn" onclick="submitAdminPoints(\'' + clientId + '\')">Apply Points</button>' +
-    '</div>';
-}
-
-function submitAdminPoints(clientId) {
-  var delta  = parseInt(document.getElementById('apts-delta').value);
-  var reason = document.getElementById('apts-reason').value;
-  var err    = document.getElementById('apts-err');
-  var btn    = document.querySelector('#admin-tab-content .p-btn');
-  if (isNaN(delta) || delta === 0) { showErr(err, 'Enter a valid number'); return; }
-  btn.disabled = true; btn.textContent = 'Applying...';
-  _supa.rpc('award_points', { p_client_id: clientId, p_delta: delta, p_reason: reason }).then(function(r) {
-    if (r.error) { showErr(err, r.error.message); btn.disabled=false; btn.textContent='Apply Points'; return; }
-    btn.textContent = '✓ Done!';
-    setTimeout(loadAdminClients, 800);
-  });
-}
-
 /* SHORTCUT from client card */
 function adminCreateProject(clientId, clientName) {
   switchAdminTab('new');
@@ -1469,6 +1700,7 @@ function unapproveReview(id) {
 function adminBtnStyle(color) {
   var base = 'background:none;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.55);font-family:\'DM Mono\',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;padding:5px 12px;border-radius:100px;cursor:pointer;transition:all .2s';
   if (color === 'green') return base.replace('rgba(255,255,255,.12)','rgba(74,222,128,.3)').replace('rgba(255,255,255,.55)','#86efac');
+  if (color === 'amber') return base.replace('rgba(255,255,255,.12)','rgba(251,191,36,.25)').replace('rgba(255,255,255,.55)','#fbbf24');
   return base;
 }
 
