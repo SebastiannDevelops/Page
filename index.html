@@ -564,21 +564,21 @@ footer{border-top:1px solid var(--border);padding:24px 5vw;display:flex;justify-
       <h2 class="sec-title">WHAT CLIENTS<br>SAY</h2>
     </div>
   </div>
-  <div class="testi-grid reveal">
+  <div class="testi-grid reveal" id="testi-grid">
     <div class="rating-card">
       <div class="rating-big">
         <div class="rating-stars">★★★★★</div>
-        <div class="rating-num">4.9<span style="font-size:1.2rem;opacity:.4">/5</span></div>
-        <div class="rating-sub">Based on 18 client reviews</div>
+        <div class="rating-num" id="testi-avg">4.9<span style="font-size:1.2rem;opacity:.4">/5</span></div>
+        <div class="rating-sub" id="testi-count">Based on 18 client reviews</div>
       </div>
       <div class="rating-pills">
-        <div class="rating-pill"><i class="fa-solid fa-star"></i> 4.9/5 Average Rating</div>
+        <div class="rating-pill"><i class="fa-solid fa-star"></i> <span id="testi-pill-avg">4.9/5</span> Average Rating</div>
         <div class="rating-pill"><i class="fa-solid fa-users"></i> 15+ Satisfied Clients</div>
         <div class="rating-pill"><i class="fa-solid fa-check"></i> 100% Delivery Rate</div>
         <div class="rating-pill"><i class="fa-solid fa-box"></i> 50+ Projects Completed</div>
       </div>
     </div>
-    <div class="testi-card">
+    <div class="testi-card" id="testi-card-1">
       <div class="testi-stars">★★★★★</div>
       <p class="testi-text">"Sebastian delivered the map ahead of schedule. The level of detail and optimization was beyond what I expected — zero lag on 500+ players."</p>
       <div class="testi-author">
@@ -586,7 +586,7 @@ footer{border-top:1px solid var(--border);padding:24px 5vw;display:flex;justify-
         <div><div class="testi-name">JRocker</div><div class="testi-role">Game Owner · Roblox</div></div>
       </div>
     </div>
-    <div class="testi-card">
+    <div class="testi-card" id="testi-card-2">
       <div class="testi-stars">★★★★★</div>
       <p class="testi-text">"Best 3D artist I've worked with in this space. His Blender renders translated perfectly into Roblox. Would hire again without hesitation."</p>
       <div class="testi-author">
@@ -1096,6 +1096,65 @@ function loadGames() {
 }
 loadGames();
 setInterval(loadGames, 60000);
+
+/* ── TESTIMONIALS — load approved reviews from Supabase ── */
+function loadTestimonials() {
+  /* Only runs after Supabase is ready */
+  if (!_supa) { setTimeout(loadTestimonials, 600); return; }
+
+  _supa
+    .from('reviews')
+    .select('*, profiles(display_name)')
+    .eq('approved', true)
+    .order('rating', { ascending: false })
+    .order('created_at', { ascending: false })
+    .then(function(r) {
+      var reviews = (r.data || []);
+      if (!reviews.length) return; /* keep static fallback */
+
+      /* Update rating summary */
+      var total = reviews.length;
+      var avg   = reviews.reduce(function(s, rv) { return s + rv.rating; }, 0) / total;
+      var avgStr = avg.toFixed(1);
+      var stars  = Math.round(avg);
+      var starStr = '★'.repeat(stars) + '☆'.repeat(5 - stars);
+
+      var avgEl   = document.getElementById('testi-avg');
+      var cntEl   = document.getElementById('testi-count');
+      var pillEl  = document.getElementById('testi-pill-avg');
+      if (avgEl)  avgEl.innerHTML  = avgStr + '<span style="font-size:1.2rem;opacity:.4">/5</span>';
+      if (cntEl)  cntEl.textContent = 'Based on ' + total + ' client review' + (total !== 1 ? 's' : '');
+      if (pillEl) pillEl.textContent = avgStr + '/5';
+
+      /* Also update header stat if it shows rating */
+      var statStars = document.querySelector('.stat-val.stars');
+      if (statStars) statStars.textContent = avgStr + ' ★';
+
+      /* Top 2 reviews by rating (already sorted) */
+      var top2 = reviews.slice(0, 2);
+      top2.forEach(function(rv, i) {
+        var card = document.getElementById('testi-card-' + (i + 1));
+        if (!card) return;
+        var name    = (rv.profiles && rv.profiles.display_name) || 'Client';
+        var initials = name.split(' ').map(function(w) { return w[0]; }).join('').toUpperCase().slice(0, 2);
+        var rvStars = '★'.repeat(rv.rating) + '☆'.repeat(5 - rv.rating);
+        card.innerHTML =
+          '<div class="testi-stars">' + rvStars + '</div>' +
+          '<p class="testi-text">"' + esc(rv.body) + '"</p>' +
+          '<div class="testi-author">' +
+            '<div class="testi-avatar">' + esc(initials) + '</div>' +
+            '<div>' +
+              '<div class="testi-name">' + esc(name) + '</div>' +
+              '<div class="testi-role">Verified Client · Roblox</div>' +
+            '</div>' +
+          '</div>';
+      });
+    });
+}
+
+/* Call after a short delay to let Supabase initialize */
+setTimeout(loadTestimonials, 1200);
+
 
 /* ── live CCU stat ── */
 function updateHeaderCCU() {
@@ -1837,10 +1896,16 @@ function loadAdminReviews() {
 }
 
 function approveReview(id) {
-  _supa.from('reviews').update({ approved: true }).eq('id', id).then(function() { loadAdminReviews(); });
+  _supa.from('reviews').update({ approved: true }).eq('id', id).then(function() {
+    loadAdminReviews();
+    loadTestimonials();
+  });
 }
 function unapproveReview(id) {
-  _supa.from('reviews').update({ approved: false }).eq('id', id).then(function() { loadAdminReviews(); });
+  _supa.from('reviews').update({ approved: false }).eq('id', id).then(function() {
+    loadAdminReviews();
+    loadTestimonials();
+  });
 }
 
 function adminBtnStyle(color) {
