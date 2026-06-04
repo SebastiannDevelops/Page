@@ -1442,28 +1442,89 @@ function showAwardPoints(clientId, clientName) {
   area.style.display = 'block';
   area.innerHTML =
     '<div style="background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);border-radius:10px;padding:14px">' +
-      '<div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4ade80;font-family:\'DM Mono\',monospace;margin-bottom:10px">Award Points — ' + esc(clientName) + '</div>' +
+      '<div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4ade80;font-family:\'DM Mono\',monospace;margin-bottom:12px">Award Points — ' + esc(clientName) + '</div>' +
+
+      /* Currency toggle */
+      '<div style="display:flex;gap:6px;margin-bottom:12px" id="cur-toggle-' + clientId + '">' +
+        '<button onclick="setAwardCurrency(\'' + clientId + '\',\'usd\')" id="cur-usd-' + clientId + '" style="' + adminBtnStyle('green') + ';padding:7px 14px;border-color:rgba(74,222,128,.5)">$ USD</button>' +
+        '<button onclick="setAwardCurrency(\'' + clientId + '\',\'robux\')" id="cur-rbx-' + clientId + '" style="' + adminBtnStyle() + ';padding:7px 14px">\uD83D\uDCB0 Robux</button>' +
+      '</div>' +
+
+      /* Input row */
       '<div style="display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap">' +
-        '<input class="p-input" id="award-amt-' + clientId + '" type="number" placeholder="e.g. 25 (for $25 commission)" min="1" style="margin-bottom:0;flex:1;min-width:160px">' +
+        '<div style="flex:1;min-width:160px;position:relative">' +
+          '<input class="p-input" id="award-amt-' + clientId + '" type="number" placeholder="Amount in USD" min="1" style="margin-bottom:0;width:100%;padding-right:80px">' +
+          '<span id="award-unit-' + clientId + '" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-family:\'DM Mono\',monospace;font-size:.6rem;color:rgba(255,255,255,.3);pointer-events:none">USD</span>' +
+        '</div>' +
         '<button onclick="submitAwardPoints(\'' + clientId + '\')" style="' + adminBtnStyle('green') + ';padding:13px 16px">Award</button>' +
         '<button onclick="document.getElementById(\'action-' + clientId + '\').style.display=\'none\'" style="' + adminBtnStyle() + ';padding:13px 16px">Cancel</button>' +
       '</div>' +
-      '<p style="font-family:\'DM Mono\',monospace;font-size:.58rem;color:rgba(255,255,255,.3);margin-top:8px">Enter commission amount in USD — $1 = 1 point.</p>' +
+
+      /* Preview */
+      '<div id="award-preview-' + clientId + '" style="font-family:\'DM Mono\',monospace;font-size:.62rem;color:#4ade80;margin-top:8px;min-height:16px"></div>' +
       '<p class="p-err" id="award-err-' + clientId + '"></p>' +
     '</div>';
+
+  /* live preview on input */
+  var inp = document.getElementById('award-amt-' + clientId);
+  inp.addEventListener('input', function() { updateAwardPreview(clientId); });
+}
+
+var _awardCurrency = {};
+function setAwardCurrency(clientId, cur) {
+  _awardCurrency[clientId] = cur;
+  var isRbx = cur === 'robux';
+  document.getElementById('cur-usd-' + clientId).style.borderColor = isRbx ? 'rgba(255,255,255,.12)' : 'rgba(74,222,128,.5)';
+  document.getElementById('cur-rbx-' + clientId).style.borderColor = isRbx ? 'rgba(251,191,36,.4)' : 'rgba(255,255,255,.12)';
+  document.getElementById('cur-rbx-' + clientId).style.color       = isRbx ? '#fbbf24' : 'rgba(255,255,255,.55)';
+  document.getElementById('cur-usd-' + clientId).style.color       = isRbx ? 'rgba(255,255,255,.55)' : '#86efac';
+  var inp = document.getElementById('award-amt-' + clientId);
+  inp.placeholder = isRbx ? 'Amount in Robux (e.g. 10000)' : 'Amount in USD (e.g. 25)';
+  document.getElementById('award-unit-' + clientId).textContent = isRbx ? 'RBX' : 'USD';
+  inp.value = '';
+  document.getElementById('award-preview-' + clientId).textContent = '';
+}
+
+function updateAwardPreview(clientId) {
+  var inp  = document.getElementById('award-amt-' + clientId);
+  var prev = document.getElementById('award-preview-' + clientId);
+  var val  = parseFloat(inp.value);
+  if (isNaN(val) || val <= 0) { prev.textContent = ''; return; }
+  var cur  = _awardCurrency[clientId] || 'usd';
+  var pts;
+  if (cur === 'robux') {
+    /* 10,000 Robux = $37.50 → 1 Robux = $0.00375 → round to nearest point */
+    var usdVal = val * 0.00375;
+    pts = Math.round(usdVal);
+    prev.textContent = val.toLocaleString() + ' Robux ≈ $' + usdVal.toFixed(2) + ' → ' + pts + ' points';
+  } else {
+    pts = Math.round(val);
+    prev.textContent = '$' + val.toFixed(2) + ' → ' + pts + ' points';
+  }
 }
 
 function submitAwardPoints(clientId) {
-  var input = document.getElementById('award-amt-' + clientId);
-  var err   = document.getElementById('award-err-' + clientId);
-  var delta = parseInt(input.value);
-  if (isNaN(delta) || delta <= 0) { showErr(err, 'Enter a valid amount'); return; }
-  input.disabled = true;
-  _supa.rpc('award_points', { p_client_id: clientId, p_delta: delta, p_reason: 'commission' }).then(function(r) {
-    if (r.error) { showErr(err, r.error.message); input.disabled=false; return; }
+  var inp  = document.getElementById('award-amt-' + clientId);
+  var err  = document.getElementById('award-err-' + clientId);
+  var cur  = _awardCurrency[clientId] || 'usd';
+  var val  = parseFloat(inp.value);
+  if (isNaN(val) || val <= 0) { showErr(err, 'Enter a valid amount'); return; }
+
+  var pts;
+  if (cur === 'robux') {
+    pts = Math.round(val * 0.00375);
+  } else {
+    pts = Math.round(val);
+  }
+  if (pts <= 0) { showErr(err, 'Amount too small to award points'); return; }
+
+  inp.disabled = true;
+  _supa.rpc('award_points', { p_client_id: clientId, p_delta: pts, p_reason: 'commission' }).then(function(r) {
+    if (r.error) { showErr(err, r.error.message); inp.disabled=false; return; }
     loadAdminClients();
   });
 }
+
 
 /* REDEEM DISCOUNT inline */
 function showRedeemPoints(clientId, clientName, currentPts) {
@@ -1528,12 +1589,35 @@ function loadAdminProjects() {
 }
 
 /* NEW PROJECT FORM */
+var _allClients = [];
 function renderNewProjectForm(prefillClientId, prefillClientName) {
   var c = document.getElementById('admin-tab-content');
   c.innerHTML =
-    '<div style="display:flex;flex-direction:column;gap:10px;max-width:480px">' +
+    '<div style="display:flex;flex-direction:column;gap:10px;max-width:520px">' +
       '<div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:4px;font-family:\'DM Mono\',monospace">New Project</div>' +
-      (prefillClientName ? '<div style="font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:4px">Client: <strong style="color:#fff">' + esc(prefillClientName) + '</strong></div>' : '') +
+
+      /* Client picker */
+      '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px">' +
+        '<div style="font-family:\'DM Mono\',monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:10px">Assign to Client</div>' +
+
+        (prefillClientId
+          /* already prefilled from client card button */
+          ? '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,.05);border-radius:8px">' +
+              '<div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0">' + esc(prefillClientName).charAt(0).toUpperCase() + '</div>' +
+              '<div><div style="font-size:.82rem;font-weight:600">' + esc(prefillClientName) + '</div><div style="font-family:\'DM Mono\',monospace;font-size:.58rem;color:rgba(255,255,255,.3)">' + prefillClientId + '</div></div>' +
+            '</div>'
+          /* searchable picker */
+          : '<input class="p-input" id="np-search" placeholder="Search client by name..." style="margin-bottom:8px" oninput="filterClients()" autocomplete="off">' +
+            '<div id="np-client-list" style="display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto"></div>' +
+            '<div id="np-selected-client" style="display:none;margin-top:8px;padding:10px 12px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);border-radius:8px">' +
+              '<div style="display:flex;align-items:center;justify-content:space-between">' +
+                '<div id="np-selected-label" style="font-size:.82rem;font-weight:600"></div>' +
+                '<button onclick="clearClientSelection()" style="background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;font-size:.8rem">✕</button>' +
+              '</div>' +
+            '</div>'
+        ) +
+      '</div>' +
+
       '<input class="p-input" id="np-title" placeholder="Project title" style="margin-bottom:0">' +
       '<textarea class="p-input" id="np-desc" placeholder="Description (optional)" rows="3" style="resize:none;min-height:80px;margin-bottom:0"></textarea>' +
       '<select class="p-input" id="np-service" style="margin-bottom:0">' +
@@ -1544,24 +1628,87 @@ function renderNewProjectForm(prefillClientId, prefillClientName) {
         '<option value="other">Other</option>' +
       '</select>' +
       '<input class="p-input" id="np-price" placeholder="Price USD (optional — for auto points)" type="number" min="0" style="margin-bottom:0">' +
-      (prefillClientId ? '' :
-        '<input class="p-input" id="np-client-id" placeholder="Client UUID (from profiles table)" style="margin-bottom:0">'
-      ) +
       '<p class="p-err" id="np-err"></p>' +
       '<button class="p-btn" onclick="submitNewProject(\'' + (prefillClientId||'') + '\')" style="margin-top:4px">Create Project</button>' +
     '</div>';
+
+  /* Load clients for search if not prefilled */
+  if (!prefillClientId) {
+    if (_allClients.length) {
+      renderClientList('');
+    } else {
+      _supa.from('profiles').select('id,display_name,tier').order('display_name').then(function(r) {
+        _allClients = r.data || [];
+        renderClientList('');
+      });
+    }
+  }
+}
+
+var _selectedClientId = null;
+function renderClientList(query) {
+  var list = document.getElementById('np-client-list');
+  if (!list) return;
+  var filtered = query
+    ? _allClients.filter(function(c) { return (c.display_name||'').toLowerCase().includes(query.toLowerCase()); })
+    : _allClients;
+  if (!filtered.length) {
+    list.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:.62rem;color:rgba(255,255,255,.25);padding:8px 4px">No clients found</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(function(cl) {
+    return '<div onclick="selectClient(\'' + cl.id + '\',\'' + esc(cl.display_name||'Unknown') + '\')" ' +
+      'style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;transition:background .15s;border:1px solid transparent" ' +
+      'onmouseover="this.style.background=\'rgba(255,255,255,.05)\'" onmouseout="this.style.background=\'transparent\'">' +
+      '<div style="width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">' +
+        esc(cl.display_name||'?').charAt(0).toUpperCase() +
+      '</div>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(cl.display_name||'Unknown') + '</div>' +
+        '<div style="font-family:\'DM Mono\',monospace;font-size:.55rem;color:rgba(255,255,255,.25)">' + (cl.tier||'new') + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function filterClients() {
+  var q = document.getElementById('np-search') ? document.getElementById('np-search').value : '';
+  renderClientList(q);
+}
+
+function selectClient(id, name) {
+  _selectedClientId = id;
+  var searchEl = document.getElementById('np-search');
+  var listEl   = document.getElementById('np-client-list');
+  var selEl    = document.getElementById('np-selected-client');
+  var labelEl  = document.getElementById('np-selected-label');
+  if (searchEl) searchEl.style.display = 'none';
+  if (listEl)   listEl.style.display = 'none';
+  if (selEl)    selEl.style.display = 'block';
+  if (labelEl)  labelEl.textContent = name;
+}
+
+function clearClientSelection() {
+  _selectedClientId = null;
+  var searchEl = document.getElementById('np-search');
+  var listEl   = document.getElementById('np-client-list');
+  var selEl    = document.getElementById('np-selected-client');
+  if (searchEl) { searchEl.style.display = ''; searchEl.value = ''; }
+  if (listEl)   { listEl.style.display = ''; }
+  if (selEl)    selEl.style.display = 'none';
+  renderClientList('');
 }
 
 function submitNewProject(prefillClientId) {
-  var title   = document.getElementById('np-title').value.trim();
-  var desc    = document.getElementById('np-desc').value.trim();
-  var service = document.getElementById('np-service').value;
-  var price   = document.getElementById('np-price').value;
-  var err     = document.getElementById('np-err');
-  var clientId = prefillClientId || (document.getElementById('np-client-id') && document.getElementById('np-client-id').value.trim());
+  var title    = document.getElementById('np-title').value.trim();
+  var desc     = document.getElementById('np-desc').value.trim();
+  var service  = document.getElementById('np-service').value;
+  var price    = document.getElementById('np-price').value;
+  var err      = document.getElementById('np-err');
+  var clientId = prefillClientId || _selectedClientId;
 
   if (!title)    { showErr(err, 'Title is required'); return; }
-  if (!clientId) { showErr(err, 'Client ID is required'); return; }
+  if (!clientId) { showErr(err, 'Please select a client'); return; }
 
   var btn = document.querySelector('#admin-tab-content .p-btn');
   btn.disabled = true; btn.textContent = 'Creating...';
@@ -1571,6 +1718,7 @@ function submitNewProject(prefillClientId) {
 
   _supa.from('projects').insert(payload).then(function(r) {
     if (r.error) { showErr(err, r.error.message); btn.disabled=false; btn.textContent='Create Project'; return; }
+    _selectedClientId = null;
     btn.textContent = '✓ Project Created!';
     setTimeout(function() { switchAdminTab('projects'); }, 1000);
   });
